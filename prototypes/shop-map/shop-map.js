@@ -18,13 +18,58 @@ function main() {
 
     const svgEl = document.querySelector('svg')
 
-    svgEl.addEventListener('mousedown', () => { interacting = true })
-    svgEl.addEventListener('mouseup', () => { interacting = false })
-    svgEl.addEventListener('mousemove', () => {
+    let startX = 0
+    let startY = 0
+    let offsetX = 0
+    let offsetY = 0
+    let currentX = 0
+    let currentY = 0
+
+    function reset(el, e) {
+        startX = e.layerX
+        startY = e.layerY
+        offsetX = 0
+        offsetY = 0
+        currentX = parseInt(el.dataset.x)
+        currentY = parseInt(el.dataset.y)
+    }
+
+    svgEl.addEventListener('mousedown', e => { 
+        interacting = true 
+
+        reset(svgEl, e)
+    })
+    svgEl.addEventListener('mouseup', e => { 
+        interacting = false 
+
+        svgEl.dataset.x = currentX
+        svgEl.dataset.y = currentY
+
+        reset(svgEl, e)
+    })
+    svgEl.addEventListener('mouseleave', e => {
+        interacting = false 
+
+        svgEl.dataset.x = currentX
+        svgEl.dataset.y = currentY
+
+        reset(svgEl, e)
+    })
+    svgEl.addEventListener('mousemove', e => {
         if (!interacting)
             return
 
-        console.log(svgEl.dataset.x, svgEl.dataset.y)
+        offsetX = e.layerX - startX
+        offsetY = e.layerY - startY
+
+        currentX = parseInt(svgEl.dataset.x) + offsetX
+        currentY = parseInt(svgEl.dataset.y) + offsetY
+
+        console.log(offsetX, offsetY)
+
+        // svgEl.style.transform = `translate(${svgEl.dataset.x + offsetX}px, ${svgEl.dataset.y + offsetY}px);`
+        // svgEl.style.transform = 'rotate(50deg);'
+        svgEl.setAttribute('transform', `translate(${currentX}, ${currentY})`)
     })
 }
 
