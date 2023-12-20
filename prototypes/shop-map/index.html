@@ -22,17 +22,20 @@
             color: #eee;
         }
 
-        .canvas-container,
         .svg-container {
-            max-width: 200px;
-            max-height: 200px;
+            position: relative;
+
             border: 10px solid limegreen;
             contain: paint;
             cursor: grab;
         }
 
-        canvas, 
+        .svg-container .controls {
+            position: absolute;
+        }
+
         svg {
+            display: block; /* TODO: can this be styled like img? (bottom margin) */
             background-color: #bbb;
             border: 3px dashed #eee;
         }

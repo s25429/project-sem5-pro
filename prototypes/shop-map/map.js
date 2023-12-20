@@ -95,30 +95,115 @@ function createMap(specs) {
 function createSvg(data) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 
-    const [w, h] = data?.objects && data.objects.length > 0 
-        ? generateSvgSize(data.objects) 
-        : [data?.width || 100, data?.height || 100]
+    // const [svgWidth, svgHeight] = data?.objects && data.objects.length > 0
+    //     ? generateSvgSize(data.objects)
+    //     : [data?.maxWidth || 100, data?.maxHeight || 100]
 
     svg.setAttribute('version', '1.1')
-    svg.setAttribute('width', w)
-    svg.setAttribute('height', h)
+    svg.setAttribute('width', 500)
+    svg.setAttribute('height', 500)
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
 
-    data?.objects?.forEach(obj => createRect(svg, {
-        x: obj?.x || 0,
-        y: obj?.y || 0,
-        width: obj?.width || 0,
-        height: obj?.height || 0,
-        fill: obj?.fill || data?.fill || 0,
-    }))
+    const objectsPerGroup = groupBy(data.objects, 'group')
+    console.log(objectsPerGroup)
+
+    const textOffsetY = 16
+    let offsetY = 0
+
+    let totalWidth = 0
+    let totalHeight = 0
+
+    Object.entries(objectsPerGroup).forEach(([name, objs], index) => {
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        group.setAttribute('data-group', name)
+        group.setAttribute('transform', `translate(0, ${textOffsetY * (index + 1)})`)
+
+
+        const map = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        map.setAttribute('class', 'map-content')
+
+        const [strokeWidth, strokeHeight] = generateSvgSize(objs)
+        
+        const stroke = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+        stroke.setAttribute('x', 0)
+        stroke.setAttribute('y', offsetY)
+        stroke.setAttribute('width', strokeWidth)
+        stroke.setAttribute('height', strokeHeight)
+        stroke.setAttribute('fill', 'none')
+        stroke.setAttribute('stroke', 'black')
+        group.append(stroke)
+
+        objs.forEach(obj => {
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+
+            rect.setAttribute('x', (obj?.x || 0) + 0)
+            rect.setAttribute('y', (obj?.y || 0) + offsetY)
+            rect.setAttribute('width', obj?.width || 0)
+            rect.setAttribute('height', obj?.height || 0)
+            rect.setAttribute('fill', obj?.fill || 'black')
+
+            map.appendChild(rect)
+        })
+
+        group.appendChild(map)
+
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+        text.setAttribute('class', 'map-group')
+        text.setAttribute('x', 0)
+        text.setAttribute('y', offsetY)
+        text.textContent = name
+        group.appendChild(text)
+
+
+        offsetY += strokeHeight
+        svg.appendChild(group)
+    })
+
+    data?.objects?.forEach(obj => {
+
+    })
+
 
     const container = document.querySelector('.svg-container')
 
     if (container === null) 
         return { container: null, svg: null }
 
+    container.setAttribute('style', `
+        max-width: ${data?.maxWidth || 200}px; 
+        max-height: ${data?.maxHeight || 200}px;
+    `)
     container.appendChild(svg)
+
     return { container, svg }
+
+    // const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
+    // const [w, h] = data?.objects && data.objects.length > 0 
+    //     ? generateSvgSize(data.objects) 
+    //     : [data?.width || 100, data?.height || 100]
+
+    // svg.setAttribute('version', '1.1')
+    // svg.setAttribute('width', w)
+    // svg.setAttribute('height', h)
+    // svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+
+    // data?.objects?.forEach(obj => createRect(svg, {
+    //     x: obj?.x || 0,
+    //     y: obj?.y || 0,
+    //     width: obj?.width || 0,
+    //     height: obj?.height || 0,
+    //     fill: obj?.fill || data?.fill || 0,
+    // }))
+
+    // const container = document.querySelector('.svg-container')
+
+    // if (container === null) 
+    //     return { container: null, svg: null }
+
+    // container.appendChild(svg)
+    // return { container, svg }
 }
 
 /**
@@ -126,17 +211,17 @@ function createSvg(data) {
  * @param {SVGElement} svg - where to append the rect to
  * @param {{ x?: number, y?: number, width?: number, height?: number, fill?: string }} ...object - position, size and color for rect
  */
-function createRect(svg, { x, y, width, height, fill }) {
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+// function createRect(svg, obj) {
+//     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 
-    rect.setAttribute('x', x)
-    rect.setAttribute('y', y)
-    rect.setAttribute('width', width )
-    rect.setAttribute('height', height )
-    rect.setAttribute('fill', fill)
+//     rect.setAttribute('x', obj?.x || 0)
+//     rect.setAttribute('y', obj?.y || 0)
+//     rect.setAttribute('width', obj?.width || 0)
+//     rect.setAttribute('height', obj?.height || 0)
+//     rect.setAttribute('fill', obj?.fill || 'black')
 
-    svg.appendChild(rect)
-}
+//     svg.appendChild(rect)
+// }
 
 /**
  * Returns max width and height to contain all map objects without clipping
@@ -153,11 +238,18 @@ function generateSvgSize(objects) {
     let maxH = 0
 
     objects.forEach(obj => {
-        maxW = getMax(obj.x, obj.width, maxW)
-        maxH = getMax(obj.y, obj.height, maxH)
+        maxW = getMax(obj?.x, obj?.width, maxW)
+        maxH = getMax(obj?.y, obj?.height, maxH)
     })
 
     return [maxW, maxH]
+}
+
+function groupBy(array, key) {
+    return array.reduce((acc, obj) => {
+        (acc[obj[key]] = acc[obj[key]] || []).push(obj)
+        return acc
+    }, {})
 }
 
 
