@@ -94,141 +94,129 @@ function createMap(specs) {
  */
 function createSvg(data) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-
-    // const [svgWidth, svgHeight] = data?.objects && data.objects.length > 0
-    //     ? generateSvgSize(data.objects)
-    //     : [data?.maxWidth || 100, data?.maxHeight || 100]
-
     svg.setAttribute('version', '1.1')
-    svg.setAttribute('width', 500)
-    svg.setAttribute('height', 500)
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
 
     const objectsPerGroup = groupBy(data.objects, 'group')
-    console.log(objectsPerGroup)
 
-    const textOffsetY = 16
-    let offsetY = 0
+    // set some styling properties
+    let totalWidth = 0  // width of widest group
+    let totalHeight = 0 // height of all group including gaps and line height
+    let groupOffset = 0 // used to offset drawing of next groups
+    let groupGap = 10   // gap between groups
+    let textOffset = -6 // vertical text offset
+    let lineHeight = 20 // vertical space for text
 
-    let totalWidth = 0
-    let totalHeight = 0
-
-    Object.entries(objectsPerGroup).forEach(([name, objs], index) => {
-        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        group.setAttribute('data-group', name)
-        group.setAttribute('transform', `translate(0, ${textOffsetY * (index + 1)})`)
-
-
-        const map = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        map.setAttribute('class', 'map-content')
-
-        const [strokeWidth, strokeHeight] = generateSvgSize(objs)
+    Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
+        const [strokeWidth, strokeHeight] = getContainedSize(objs)
         
-        const stroke = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        stroke.setAttribute('x', 0)
-        stroke.setAttribute('y', offsetY)
-        stroke.setAttribute('width', strokeWidth)
-        stroke.setAttribute('height', strokeHeight)
-        stroke.setAttribute('fill', 'none')
-        stroke.setAttribute('stroke', 'black')
-        group.append(stroke)
-
-        objs.forEach(obj => {
-            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-
-            rect.setAttribute('x', (obj?.x || 0) + 0)
-            rect.setAttribute('y', (obj?.y || 0) + offsetY)
-            rect.setAttribute('width', obj?.width || 0)
-            rect.setAttribute('height', obj?.height || 0)
-            rect.setAttribute('fill', obj?.fill || 'black')
-
-            map.appendChild(rect)
+        const strokeRect = createRect({ 
+            x: 0, 
+            y: groupOffset, 
+            width: strokeWidth, 
+            height: strokeHeight,
+            strokeColor: 'black',
         })
 
-        group.appendChild(map)
+        const map = createGroup({ attrs: { 'class': 'map-content' } })
 
+        objs.forEach(obj => {
+            map.appendChild(createRect({
+                x: (obj?.x || 0) + 0,
+                y: (obj?.y || 0) + groupOffset,
+                width: obj?.width,
+                height: obj?.height,
+                fillColor: obj?.fill,
+            }))
+        })
 
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.setAttribute('class', 'map-group')
-        text.setAttribute('x', 0)
-        text.setAttribute('y', offsetY)
-        text.textContent = name
-        group.appendChild(text)
+        const text = createText({
+            x: 0,
+            y: groupOffset + textOffset,
+            text: groupName,
+            attrs: { 'class': 'map-group' }
+        })
 
+        groupOffset += strokeHeight + groupGap
+        totalWidth = strokeWidth > totalWidth ? strokeWidth : totalWidth
+        totalHeight += lineHeight + strokeHeight
 
-        offsetY += strokeHeight
-        svg.appendChild(group)
+        svg.appendChild(createGroup({
+            attrs: {
+                'data-group': groupName,
+                'transform': `translate(0, ${lineHeight * (index + 1)})`,
+            },
+            children: [strokeRect, map, text],
+        }))
     })
 
-    data?.objects?.forEach(obj => {
+    svg.setAttribute('width', totalWidth)
+    svg.setAttribute('height', totalHeight)
 
-    })
+    return appendSvgToContainer(svg, data?.maxWidth, data?.maxHeight)
+}
 
+function createRect({ x, y, width, height, fillColor, strokeColor, attrs }) {
+    const rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 
+    rectEl.setAttribute('x', x || 0)
+    rectEl.setAttribute('y', y || 0)
+    rectEl.setAttribute('width', width || 0)
+    rectEl.setAttribute('height', height || 0)
+    rectEl.setAttribute('fill', fillColor || 'none')
+    rectEl.setAttribute('stroke', strokeColor || 'none')
+
+    addAttrs(rectEl, attrs)
+
+    return rectEl
+}
+
+function createText({ x, y, text, attrs }) {
+    const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+
+    textEl.setAttribute('x', x || 0)
+    textEl.setAttribute('y', y || 0)
+    textEl.textContent = text
+
+    addAttrs(textEl, attrs)
+
+    return textEl
+}
+
+function createGroup({ attrs, children }) {
+    const groupEl = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
+    addAttrs(groupEl, attrs)
+
+    if (children !== undefined)
+        children.forEach(child => groupEl.appendChild(child))
+
+    return groupEl
+}
+
+function appendSvgToContainer(svg, width, height) {
     const container = document.querySelector('.svg-container')
 
     if (container === null) 
         return { container: null, svg: null }
 
-    container.setAttribute('style', `
-        max-width: ${data?.maxWidth || 200}px; 
-        max-height: ${data?.maxHeight || 200}px;
-    `)
+    if (width !== undefined && height !== undefined)
+        addAttrs(container, { 'style': `
+            max-width: ${width || 200}px; 
+            max-height: ${height || 200}px;
+        ` })
+
     container.appendChild(svg)
 
     return { container, svg }
-
-    // const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-
-    // const [w, h] = data?.objects && data.objects.length > 0 
-    //     ? generateSvgSize(data.objects) 
-    //     : [data?.width || 100, data?.height || 100]
-
-    // svg.setAttribute('version', '1.1')
-    // svg.setAttribute('width', w)
-    // svg.setAttribute('height', h)
-    // svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
-
-    // data?.objects?.forEach(obj => createRect(svg, {
-    //     x: obj?.x || 0,
-    //     y: obj?.y || 0,
-    //     width: obj?.width || 0,
-    //     height: obj?.height || 0,
-    //     fill: obj?.fill || data?.fill || 0,
-    // }))
-
-    // const container = document.querySelector('.svg-container')
-
-    // if (container === null) 
-    //     return { container: null, svg: null }
-
-    // container.appendChild(svg)
-    // return { container, svg }
 }
-
-/**
- * Creates rectangle elements for a specified SVG.
- * @param {SVGElement} svg - where to append the rect to
- * @param {{ x?: number, y?: number, width?: number, height?: number, fill?: string }} ...object - position, size and color for rect
- */
-// function createRect(svg, obj) {
-//     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-
-//     rect.setAttribute('x', obj?.x || 0)
-//     rect.setAttribute('y', obj?.y || 0)
-//     rect.setAttribute('width', obj?.width || 0)
-//     rect.setAttribute('height', obj?.height || 0)
-//     rect.setAttribute('fill', obj?.fill || 'black')
-
-//     svg.appendChild(rect)
-// }
 
 /**
  * Returns max width and height to contain all map objects without clipping
  * @param {createMap.specs.objects} objects - array of objects
  * @returns tuple containing max width and max height
  */
-function generateSvgSize(objects) {
+function getContainedSize(objects) {
     const getMax = (left, right, sum) => 
         ![left, right].includes(undefined) && left + right > sum
             ? left + right
@@ -252,5 +240,11 @@ function groupBy(array, key) {
     }, {})
 }
 
+function addAttrs(el, attrs) {
+    if (attrs !== undefined)
+        Object
+            .entries(attrs)
+            .forEach(([key, value]) => el.setAttribute(key, value))
+}
 
 export { createMap }
