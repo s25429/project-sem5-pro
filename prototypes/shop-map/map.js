@@ -119,19 +119,31 @@ function createSvg(data) {
             width: strokeWidth, 
             height: strokeHeight,
             strokeColor: 'black',
+            strokeWidth: 1,
         })
 
         const map = createGroup({ attrs: { 'class': 'map-content' } })
 
         objs.forEach(obj => {
-            map.appendChild(createRect({
-                x: (obj?.x || 0) + props.group.offset.x,
-                y: (obj?.y || 0) + props.group.offset.y,
-                width: obj?.width,
-                height: obj?.height,
-                fillColor: obj?.fill || data?.fill,
-                attrs: { 'data-category': obj?.category }
-            }))
+            map.appendChild(
+                // createRoundedRect({
+                //     x: (obj?.x || 0) + props.group.offset.x,
+                //     y: (obj?.y || 0) + props.group.offset.y,
+                //     width: obj?.width,
+                //     height: obj?.height,
+                //     fillColor: obj?.fill || data?.fill,
+                //     radius: 10,
+                //     attrs: { 'data-category': obj?.category },
+                // })
+                createRect({
+                    x: (obj?.x || 0) + props.group.offset.x,
+                    y: (obj?.y || 0) + props.group.offset.y,
+                    width: obj?.width,
+                    height: obj?.height,
+                    fillColor: obj?.fill || data?.fill,
+                    attrs: { 'data-category': obj?.category },
+                })
+            )
         })
 
         const text = createText({
@@ -140,8 +152,8 @@ function createSvg(data) {
             text: groupName,
             attrs: { 
                 'class': 'map-group', 
-                'font-size': '1rem' 
-            }
+                'font-size': '1rem' ,
+            },
         })
 
         props.group.offset.y += strokeHeight + props.group.gap.y
@@ -165,16 +177,17 @@ function createSvg(data) {
 
 /**
  * Creates an SVG rect element
- * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, attrs:? { [key: string]: string } }} arg - type hint
+ * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, strokeWidth?: number, attrs:? { [key: string]: string } }} arg - type hint
  * @param x - horizontal position
  * @param y - vertical position
  * @param width - rect's width
  * @param height - rect's height
  * @param fillColor - rectangle's color, transparent if ommited
  * @param strokeColor - rectangle's border color, skipped if ommited
+ * @param strokeWidth - rectangle's border width, 0 if ommited
  * @param attrs - attributes to append
  */
-function createRect({ x, y, width, height, fillColor, strokeColor, attrs }) {
+function createRect({ x, y, width, height, fillColor, strokeColor, strokeWidth, attrs }) {
     const rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 
     rectEl.setAttribute('x', x || 0)
@@ -183,10 +196,48 @@ function createRect({ x, y, width, height, fillColor, strokeColor, attrs }) {
     rectEl.setAttribute('height', height || 0)
     rectEl.setAttribute('fill', fillColor || 'none')
     rectEl.setAttribute('stroke', strokeColor || 'none')
+    rectEl.setAttribute('stroke-width', strokeWidth || '0')
 
     addAttrs(rectEl, attrs)
 
     return rectEl
+}
+
+/**
+ * 
+ * @param {*} param0 
+ */
+function createRoundedRect({ x, y, width, height, fillColor, strokeColor, strokeWidth, radius, attrs }) {
+    const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+
+    const newWidth = width - 2 * radius
+    const newHeight = height - 2 * radius
+
+    const path = {
+        start: `M${x},${y + radius}`,
+        end: `z`,
+        line: {
+            l: `h${newWidth}`,
+            b: `v${newHeight}`,
+            r: `h-${newWidth}`,
+            t: `v-${newHeight}`,
+        },
+        corner: {
+            bl: `a${radius},${radius} 0 0 1 ${radius},${radius}`,
+            br: `a${radius},${radius} 0 0 1 -${radius},${radius}`,
+            tr: `a${radius},${radius} 0 0 1 -${radius},-${radius}`,
+            tl: `a${radius},${radius} 0 0 1 ${radius},-${radius}`,
+        },
+    }
+
+    pathEl.setAttribute('d', `${path.start} ${path.line.l} ${path.corner.bl} ${path.line.b} ${path.corner.br} ${path.line.r} ${path.corner.tr} ${path.line.t} ${path.corner.tl} ${path.end}`)    
+    pathEl.setAttribute('fill', fillColor || 'none')
+    pathEl.setAttribute('stroke', strokeColor || 'none')
+    pathEl.setAttribute('stroke-width', strokeWidth || '0')
+
+    addAttrs(pathEl, attrs)
+
+    return pathEl
 }
 
 /**
