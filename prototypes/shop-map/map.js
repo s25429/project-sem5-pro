@@ -97,22 +97,25 @@ function createSvg(data) {
     svg.setAttribute('version', '1.1')
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
 
-    const objectsPerGroup = groupBy(data.objects, 'group')
+    const props = {
+        totalSize: { x: 0, y: 0 },
+        group: {
+            offset: { x: 0, y: 0 },
+            gap: { x: 0, y: 10 },
+        },
+        text: {
+            offset: { x: 0, y: -6 },
+            lineHeight: 20,
+        },
+    }
 
-    // set some styling properties
-    let totalWidth = 0  // width of widest group
-    let totalHeight = 0 // height of all group including gaps and line height
-    let groupOffset = 0 // used to offset drawing of next groups
-    let groupGap = 10   // gap between groups
-    let textOffset = -6 // vertical text offset
-    let lineHeight = 20 // vertical space for text
-
+    const objectsPerGroup = groupBy(data?.objects || [], 'group')
     Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
         const [strokeWidth, strokeHeight] = getContainedSize(objs)
         
         const strokeRect = createRect({ 
-            x: 0, 
-            y: groupOffset, 
+            x: props.group.offset.x, 
+            y: props.group.offset.y, 
             width: strokeWidth, 
             height: strokeHeight,
             strokeColor: 'black',
@@ -122,36 +125,40 @@ function createSvg(data) {
 
         objs.forEach(obj => {
             map.appendChild(createRect({
-                x: (obj?.x || 0) + 0,
-                y: (obj?.y || 0) + groupOffset,
+                x: (obj?.x || 0) + props.group.offset.x,
+                y: (obj?.y || 0) + props.group.offset.y,
                 width: obj?.width,
                 height: obj?.height,
-                fillColor: obj?.fill,
+                fillColor: obj?.fill || data?.fill,
+                attrs: { 'data-category': obj?.category }
             }))
         })
 
         const text = createText({
             x: 0,
-            y: groupOffset + textOffset,
+            y: props.group.offset.y + props.text.offset.y,
             text: groupName,
-            attrs: { 'class': 'map-group' }
+            attrs: { 
+                'class': 'map-group', 
+                'font-size': '1rem' 
+            }
         })
 
-        groupOffset += strokeHeight + groupGap
-        totalWidth = strokeWidth > totalWidth ? strokeWidth : totalWidth
-        totalHeight += lineHeight + strokeHeight
+        props.group.offset.y += strokeHeight + props.group.gap.y
+        props.totalSize.x = strokeWidth > props.totalSize.x ? strokeWidth : props.totalSize.x
+        props.totalSize.y += props.text.lineHeight + strokeHeight
 
         svg.appendChild(createGroup({
             attrs: {
                 'data-group': groupName,
-                'transform': `translate(0, ${lineHeight * (index + 1)})`,
+                'transform': `translate(0, ${props.text.lineHeight * (index + 1)})`,
             },
             children: [strokeRect, map, text],
         }))
     })
 
-    svg.setAttribute('width', totalWidth)
-    svg.setAttribute('height', totalHeight)
+    svg.setAttribute('width', props.totalSize.x)
+    svg.setAttribute('height', props.totalSize.y)
 
     return appendSvgToContainer(svg, data?.maxWidth, data?.maxHeight)
 }
