@@ -156,6 +156,17 @@ function createSvg(data) {
     return appendSvgToContainer(svg, data?.maxWidth, data?.maxHeight)
 }
 
+/**
+ * Creates an SVG rect element
+ * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, attrs:? { [key: string]: string } }} arg - type hint
+ * @param x - horizontal position
+ * @param y - vertical position
+ * @param width - rect's width
+ * @param height - rect's height
+ * @param fillColor - rectangle's color, transparent if ommited
+ * @param strokeColor - rectangle's border color, skipped if ommited
+ * @param attrs - attributes to append
+ */
 function createRect({ x, y, width, height, fillColor, strokeColor, attrs }) {
     const rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 
@@ -171,18 +182,32 @@ function createRect({ x, y, width, height, fillColor, strokeColor, attrs }) {
     return rectEl
 }
 
+/**
+ * Creates an SVG text element
+ * @param {{ x?: number, y?: number, text?: string, attrs?: { [key: string]: string } }} arg - type hint 
+ * @param x - horizontal position
+ * @param y - vertical position
+ * @param text - text to display
+ * @param attrs - attributes to append
+ */
 function createText({ x, y, text, attrs }) {
     const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
     textEl.setAttribute('x', x || 0)
     textEl.setAttribute('y', y || 0)
-    textEl.textContent = text
+    textEl.textContent = text || ''
 
     addAttrs(textEl, attrs)
 
     return textEl
 }
 
+/**
+ * Creates an SVG group element
+ * @param {{ attrs?: { [key: string]: string }, children?: Element[] }} arg - type hint 
+ * @param attrs - attributes to append
+ * @param children - list of elements to append inside the group
+ */
 function createGroup({ attrs, children }) {
     const groupEl = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
@@ -194,6 +219,13 @@ function createGroup({ attrs, children }) {
     return groupEl
 }
 
+/**
+ * Appends SVG element to a container if it is found
+ * @param {SVGElement} svg - svg to append
+ * @param {number} width - max width of the clipping container
+ * @param {number} height - max height of the clipping container
+ * @returns object with 'svg' and 'container' properties that are either null or objects of those elements
+ */
 function appendSvgToContainer(svg, width, height) {
     const container = document.querySelector('.svg-container')
 
@@ -233,6 +265,12 @@ function getContainedSize(objects) {
     return [maxW, maxH]
 }
 
+/**
+ * Group arrays of objects by a certain property, does not modify objects in any way
+ * @param {Array<{}>} array - array of objects
+ * @param {string} key - property by which grouping should be processed
+ * @returns object with [key] as grouping property which value is an array of objects grouped by that property
+ */
 function groupBy(array, key) {
     return array.reduce((acc, obj) => {
         (acc[obj[key]] = acc[obj[key]] || []).push(obj)
@@ -240,6 +278,11 @@ function groupBy(array, key) {
     }, {})
 }
 
+/**
+ * Modifies passed element by setting it attributes using 'setAttribute' method
+ * @param {Element} el - element to be modified
+ * @param {{ [key: string]: string }} attrs - object with attributes to set with setAttribute(key, value)
+ */
 function addAttrs(el, attrs) {
     if (attrs !== undefined)
         Object
