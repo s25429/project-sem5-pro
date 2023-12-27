@@ -109,6 +109,15 @@ function createSvg(data) {
         },
     }
 
+    const shadowFilter = createDropShadowFilter({
+        id: 'f1',
+        x: '-40%',
+        y: '-40%',
+        width: '180%',
+        height: '180%',
+    })
+    console.log(shadowFilter)
+
     const objectsPerGroup = groupBy(data?.objects || [], 'group')
     Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
         const [strokeWidth, strokeHeight] = getContainedSize(objs)
@@ -133,7 +142,10 @@ function createSvg(data) {
                     height: obj?.height,
                     fillColor: obj?.fill || data?.fill,
                     radius: 8,
-                    attrs: { 'data-category': obj?.category },
+                    attrs: { 
+                        'data-category': obj?.category,
+                        'style': `filter: url(#${shadowFilter.id});`
+                    },
                 })
             )
         })
@@ -151,6 +163,10 @@ function createSvg(data) {
         props.group.offset.y += strokeHeight + props.group.gap.y
         props.totalSize.x = strokeWidth > props.totalSize.x ? strokeWidth : props.totalSize.x
         props.totalSize.y += props.text.lineHeight + strokeHeight + props.group.gap.y // TODO: adds a gap for the last element as well
+
+        svg.appendChild(createDefs({
+            children: [shadowFilter.filter]
+        }))
 
         svg.appendChild(createGroup({
             attrs: {
@@ -279,6 +295,17 @@ function createGroup({ attrs, children }) {
     return groupEl
 }
 
+function createDefs({ attrs, children }) {
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
+
+    addAttrs(defs, attrs)
+
+    if (children !== undefined)
+        children.forEach(child => defs.appendChild(child))
+
+    return defs
+}
+
 /**
  * Appends SVG element to a container if it is found
  * @param {SVGElement} svg - svg to append
@@ -301,6 +328,60 @@ function appendSvgToContainer(svg, width, height) {
     container.appendChild(svg)
 
     return { container, svg }
+}
+
+function createDropShadowFilter({ id, x, y, width, height, filterUnits = 'userSpaceOnUse' }) {
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter')
+
+    filter.setAttribute('id', id)
+    filter.setAttribute('x', x)
+    filter.setAttribute('y', y)
+    filter.setAttribute('width', width)
+    filter.setAttribute('height', height)
+    filter.setAttribute('filterUnits', filterUnits)
+
+    filter.appendChild(createGaussianBlurFilter({}))
+    filter.appendChild(createOffsetFilter({ x: 5, y: 5 }))
+    filter.appendChild(createOffsetFilter({ x: -5, y: -5 }))
+    filter.appendChild(createNodeMergeFilter({}))
+
+    return { id, filter }
+}
+
+function createGaussianBlurFilter({ source = 'SourceAlpha', stdDeviation = 8 }) {
+    const blur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur')
+
+    blur.setAttribute('in', source)
+    blur.setAttribute('stdDeviation', stdDeviation)
+
+    return blur
+}
+
+function createOffsetFilter({ x = 0, y = 0 , result = 'offsetblur' }) {
+    const offset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset')
+
+    offset.setAttribute('dx', x)
+    offset.setAttribute('dy', y)
+    offset.setAttribute('result', result)
+
+    return offset
+}
+
+function createNodeMergeFilter({ source = 'SourceGraphic' }) {
+    const merge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge')
+
+    const mergeNode1 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode')
+    merge.appendChild(mergeNode1)
+
+    const mergeNode2 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode')
+    mergeNode2.setAttribute('in', source)
+    merge.appendChild(mergeNode2)
+
+    const mergeNode3 = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode')
+    mergeNode3.setAttribute('in', source)
+    merge.appendChild(mergeNode3)
+
+    return merge
 }
 
 /**
