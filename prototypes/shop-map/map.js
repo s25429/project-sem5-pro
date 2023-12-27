@@ -126,21 +126,13 @@ function createSvg(data) {
 
         objs.forEach(obj => {
             map.appendChild(
-                // createRoundedRect({
-                //     x: (obj?.x || 0) + props.group.offset.x,
-                //     y: (obj?.y || 0) + props.group.offset.y,
-                //     width: obj?.width,
-                //     height: obj?.height,
-                //     fillColor: obj?.fill || data?.fill,
-                //     radius: 10,
-                //     attrs: { 'data-category': obj?.category },
-                // })
-                createRect({
+                createRoundedRect({
                     x: (obj?.x || 0) + props.group.offset.x,
                     y: (obj?.y || 0) + props.group.offset.y,
                     width: obj?.width,
                     height: obj?.height,
                     fillColor: obj?.fill || data?.fill,
+                    radius: 8,
                     attrs: { 'data-category': obj?.category },
                 })
             )
@@ -158,7 +150,7 @@ function createSvg(data) {
 
         props.group.offset.y += strokeHeight + props.group.gap.y
         props.totalSize.x = strokeWidth > props.totalSize.x ? strokeWidth : props.totalSize.x
-        props.totalSize.y += props.text.lineHeight + strokeHeight
+        props.totalSize.y += props.text.lineHeight + strokeHeight + props.group.gap.y // TODO: adds a gap for the last element as well
 
         svg.appendChild(createGroup({
             attrs: {
@@ -177,7 +169,7 @@ function createSvg(data) {
 
 /**
  * Creates an SVG rect element
- * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, strokeWidth?: number, attrs:? { [key: string]: string } }} arg - type hint
+ * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, strokeWidth?: number, attrs?: { [key: string]: string } }} arg - type hint
  * @param x - horizontal position
  * @param y - vertical position
  * @param width - rect's width
@@ -204,17 +196,27 @@ function createRect({ x, y, width, height, fillColor, strokeColor, strokeWidth, 
 }
 
 /**
- * 
- * @param {*} param0 
+ * Creates an SVG path element that behaves like a rect element, but with rounded corners
+ * @param {{ x?: number, y?: number, width?: number, height?: number, fillColor?: string, strokeColor?: string, strokeWidth?: number, radius?: number, attrs?: { [key: string]: string } }} arg - type hint
+ * @param x - horizontal position
+ * @param y - vertical position
+ * @param width - rect's width
+ * @param height - rect's height
+ * @param fillColor - rectangle's color, transparent if ommited
+ * @param strokeColor - rectangle's border color, skipped if ommited
+ * @param strokeWidth - rectangle's border width, 0 if ommited
+ * @param radius - radius of the rounded corners, 0 if ommited
+ * @param attrs - attributes to append
  */
 function createRoundedRect({ x, y, width, height, fillColor, strokeColor, strokeWidth, radius, attrs }) {
     const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
-    const newWidth = width - 2 * radius
-    const newHeight = height - 2 * radius
+    const newRadius = radius || 0
+    const newWidth = width - 2 * newRadius
+    const newHeight = height - 2 * newRadius
 
     const path = {
-        start: `M${x},${y + radius}`,
+        start: `M${x + newRadius},${y}`, // TODO: weird fix?
         end: `z`,
         line: {
             l: `h${newWidth}`,
@@ -223,10 +225,10 @@ function createRoundedRect({ x, y, width, height, fillColor, strokeColor, stroke
             t: `v-${newHeight}`,
         },
         corner: {
-            bl: `a${radius},${radius} 0 0 1 ${radius},${radius}`,
-            br: `a${radius},${radius} 0 0 1 -${radius},${radius}`,
-            tr: `a${radius},${radius} 0 0 1 -${radius},-${radius}`,
-            tl: `a${radius},${radius} 0 0 1 ${radius},-${radius}`,
+            bl: `a${newRadius},${newRadius} 0 0 1 ${newRadius},${newRadius}`,
+            br: `a${newRadius},${newRadius} 0 0 1 -${newRadius},${newRadius}`,
+            tr: `a${newRadius},${newRadius} 0 0 1 -${newRadius},-${newRadius}`,
+            tl: `a${newRadius},${newRadius} 0 0 1 ${newRadius},-${newRadius}`,
         },
     }
 
