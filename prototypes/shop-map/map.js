@@ -67,6 +67,8 @@ const map = {
                 'transform', 
                 `translate(${this.data.currentX}, ${this.data.currentY})`
             )
+        
+        console.log(e.layerX, e.layerY)
     }
 }
 
@@ -116,7 +118,9 @@ function createSvg(data) {
         width: '180%',
         height: '180%',
     })
-    console.log(shadowFilter)
+    svg.appendChild(createDefs({
+        children: [shadowFilter.filter]
+    }))
 
     const objectsPerGroup = groupBy(data?.objects || [], 'group')
     Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
@@ -135,6 +139,17 @@ function createSvg(data) {
 
         objs.forEach(obj => {
             map.appendChild(
+                // createRect({
+                //     x: (obj?.x || 0) + props.group.offset.x,
+                //     y: (obj?.y || 0) + props.group.offset.y,
+                //     width: obj?.width,
+                //     height: obj?.height,
+                //     fillColor: obj?.fill || data?.fill,
+                //     attrs: { 
+                //         'data-category': obj?.category,
+                //         'style': `filter: url(#${shadowFilter.id});`
+                //     },
+                // })
                 createRoundedRect({
                     x: (obj?.x || 0) + props.group.offset.x,
                     y: (obj?.y || 0) + props.group.offset.y,
@@ -163,10 +178,6 @@ function createSvg(data) {
         props.group.offset.y += strokeHeight + props.group.gap.y
         props.totalSize.x = strokeWidth > props.totalSize.x ? strokeWidth : props.totalSize.x
         props.totalSize.y += props.text.lineHeight + strokeHeight + props.group.gap.y // TODO: adds a gap for the last element as well
-
-        svg.appendChild(createDefs({
-            children: [shadowFilter.filter]
-        }))
 
         svg.appendChild(createGroup({
             attrs: {
