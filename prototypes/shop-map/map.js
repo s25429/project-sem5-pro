@@ -1,75 +1,6 @@
-const map = {
-    data: {
-        container: null,
-        svg: null,
-        isMoving: false,
-        startX: 0,
-        startY: 0,
-        offsetX: 0,
-        offsetY: 0,
-        currentX: 0,
-        currentY: 0,
-        sourceX: 0,
-        sourceY: 0,
-    },
-    /**
-     * Resets data for movement
-     * @param {MouseEvent} e 
-     */
-    reset(e) {
-        this.data.startX = e.layerX
-        this.data.startY = e.layerY
-        this.data.offsetX = 0
-        this.data.offsetY = 0
-        this.data.currentX = 0
-        this.data.currentY = 0
-    },
-    /**
-     * Handles what should happen on mouse button down
-     * @param {MouseEvent} e 
-     */
-    onGrab(e) {
-        this.data.isMoving = true
-        this.reset(e)
-    },
-    /**
-     * Handles what should happen on mouse button up
-     * @param {MouseEvent} e 
-     */
-    onDrop(e) {
-        this.onLeave()
-        this.reset(e)
-    },
-    /**
-     * Handles what should happen on mouse leaving map area
-     */
-    onLeave() {
-        this.data.isMoving = false
-        this.data.sourceX = this.data.currentX
-        this.data.sourceY = this.data.currentY
-    },
-    /**
-     * Handles what should happen on mouse being moved in the area
-     * @param {MouseEvent} e 
-     */
-    onMove(e) {
-        if (!this.data.isMoving)
-            return
-    
-        this.data.offsetX = e.layerX - this.data.startX
-        this.data.offsetY = e.layerY - this.data.startY
-    
-        this.data.currentX = this.data.sourceX + this.data.offsetX
-        this.data.currentY = this.data.sourceY + this.data.offsetY
-    
-        if (![null, undefined].includes(this.data.svg))
-            this.data.svg.setAttribute(
-                'transform', 
-                `translate(${this.data.currentX}, ${this.data.currentY})`
-            )
-        
-        console.log(e.layerX, e.layerY)
-    }
+const DEBUG = {
+    useRectForPathElements: false,
+    disableShadows: false,
 }
 
 /**
@@ -80,13 +11,81 @@ const map = {
 function createMap(specs) {
     const { container, svg } = createSvg(specs)
 
-    map.data.container = container
-    map.data.svg = svg
+    let isMoving = false
+    let startX = 0
+    let startY = 0
+    let offsetX = 0
+    let offsetY = 0
+    let currentX = 0
+    let currentY = 0
+    let sourceX = 0
+    let sourceY = 0
 
-    map.data.container.addEventListener('mousedown', map.onGrab.bind(map))
-    map.data.container.addEventListener('mouseup', map.onDrop.bind(map))
-    map.data.container.addEventListener('mouseleave', map.onLeave.bind(map))
-    map.data.container.addEventListener('mousemove', map.onMove.bind(map))
+    container.addEventListener('mousedown', onGrab)
+    container.addEventListener('mouseup', onDrop)
+    container.addEventListener('mouseleave', onLeave)
+    container.addEventListener('mousemove', onMove)
+
+    /**
+     * Handles what should happen on mouse button down
+     * @param {MouseEvent} e 
+     */
+    function onGrab(e) {
+        isMoving = true
+        reset(e)
+    }
+
+    /**
+     * Handles what should happen on mouse button up
+     * @param {MouseEvent} e 
+     */
+    function onDrop(e) {
+        onLeave()
+        reset(e)
+    }
+
+    /**
+     * Handles what should happen on mouse leaving map area
+     */
+    function onLeave() {
+        isMoving = false
+        sourceX = currentX
+        sourceY = currentY
+    }
+
+    /**
+     * Handles what should happen on mouse being moved in the area
+     * @param {MouseEvent} e 
+     */
+    function onMove(e) {
+        if (!isMoving)
+            return
+    
+        offsetX = e.layerX - startX
+        offsetY = e.layerY - startY
+    
+        currentX = sourceX + offsetX
+        currentY = sourceY + offsetY
+    
+        if (![null, undefined].includes(svg))
+            svg.setAttribute(
+                'transform', 
+                `translate(${currentX}, ${currentY})`
+            )
+    }
+
+    /**
+     * Resets data for movement
+     * @param {MouseEvent} e 
+     */
+    function reset(e) {
+        startX = e.layerX
+        startY = e.layerY
+        offsetX = 0
+        offsetY = 0
+        currentX = 0
+        currentY = 0
+    }
 }
 
 /**
@@ -118,9 +117,12 @@ function createSvg(data) {
         width: '180%',
         height: '180%',
     })
-    svg.appendChild(createDefs({
-        children: [shadowFilter.filter]
-    }))
+
+    if (!DEBUG.disableShadows) {
+        svg.appendChild(createDefs({
+            children: [shadowFilter.filter]
+        }))
+    }
 
     const objectsPerGroup = groupBy(data?.objects || [], 'group')
     Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
@@ -139,29 +141,30 @@ function createSvg(data) {
 
         objs.forEach(obj => {
             map.appendChild(
-                // createRect({
-                //     x: (obj?.x || 0) + props.group.offset.x,
-                //     y: (obj?.y || 0) + props.group.offset.y,
-                //     width: obj?.width,
-                //     height: obj?.height,
-                //     fillColor: obj?.fill || data?.fill,
-                //     attrs: { 
-                //         'data-category': obj?.category,
-                //         'style': `filter: url(#${shadowFilter.id});`
-                //     },
-                // })
-                createRoundedRect({
-                    x: (obj?.x || 0) + props.group.offset.x,
-                    y: (obj?.y || 0) + props.group.offset.y,
-                    width: obj?.width,
-                    height: obj?.height,
-                    fillColor: obj?.fill || data?.fill,
-                    radius: 8,
-                    attrs: { 
-                        'data-category': obj?.category,
-                        'style': `filter: url(#${shadowFilter.id});`
-                    },
-                })
+                DEBUG.useRectForPathElements
+                    ? createRect({
+                        x: (obj?.x || 0) + props.group.offset.x,
+                        y: (obj?.y || 0) + props.group.offset.y,
+                        width: obj?.width,
+                        height: obj?.height,
+                        fillColor: obj?.fill || data?.fill,
+                        attrs: { 
+                            'data-category': obj?.category,
+                            'style': `filter: url(#${shadowFilter?.id || ''});`
+                        },
+                    }) 
+                    : createRoundedRect({
+                        x: (obj?.x || 0) + props.group.offset.x,
+                        y: (obj?.y || 0) + props.group.offset.y,
+                        width: obj?.width,
+                        height: obj?.height,
+                        fillColor: obj?.fill || data?.fill,
+                        radius: 8,
+                        attrs: { 
+                            'data-category': obj?.category,
+                            'style': `filter: url(#${shadowFilter?.id || ''});`
+                        },
+                    })
             )
         })
 
