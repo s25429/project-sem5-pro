@@ -15,7 +15,7 @@ function Header({ title = 'Półkarzyk' }) {
             <h1>{title}</h1>
             <FaEllipsisVertical onClick={() => setToggleNav(!toggleNav)} className='toggler-nav' />
             <nav aria-hidden={!toggleNav}>
-                siema
+                {/* TODO: Here paste Nav component or override <nav> with it and paste a prop into it stating if it is hidden */}
             </nav>
         </header>
     )
