@@ -1,0 +1,23 @@
+.map-controls {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+}
+
+.map-controls button[type=button] {
+    width: 2rem;
+    height: 2rem;
+
+    display: grid;
+    place-items: center;
+    
+    font-size: 1.3rem;
+
+    color: var(--c-gray);
+    background-color: #d9e1e2;
+    border-radius: 1rem;
+}

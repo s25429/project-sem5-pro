@@ -3,6 +3,7 @@ import { useState } from 'react'
 import './css/App.css'
 
 import Header from './components/Header'
+import MapControls from './components/MapControls'
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   return (
     <>
       <Header />
+      <MapControls />
     </>
   )
 }
