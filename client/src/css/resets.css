@@ -7,6 +7,18 @@ a {
     color: currentColor;
 }
 
+button, input {
+    padding: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
 body {
     margin: 0;
 }

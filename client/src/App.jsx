@@ -1,6 +1,9 @@
 import { useState } from 'react'
+
 import './css/App.css'
+
 import Header from './components/Header'
+import Filter from './components/Filter'
 
 
 function App() {
