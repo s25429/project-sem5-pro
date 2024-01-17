@@ -13,30 +13,30 @@ header {
     border-radius: 0 0 60px 60px;
 }
 
-header > img.logo {
+header>img.logo {
     width: 2rem;
     display: block;
     height: auto;
 }
 
-header > h1 {
+header>h1 {
     flex: 1;
     text-align: center;
     font-size: 1.5rem;
 }
 
-header > .toggler-nav {
+header>.toggler-nav {
     width: 2.5rem;
     height: auto;
     cursor: pointer;
     transition: opacity .1s linear;
 }
 
-header > .toggler-nav:hover {
+header>.toggler-nav:hover {
     opacity: .5;
 }
 
-header > nav {
+header>nav {
     position: fixed;
     top: 0;
     right: 0;
@@ -53,6 +53,11 @@ header > nav {
     transition: transform .1s linear;
 }
 
-header > nav[aria-hidden=true] {
+header>nav[aria-hidden=true] {
     transform: translateX(100%);
+}
+
+header>nav button {
+    color: black;
+    border: 1px solid red;
 }
