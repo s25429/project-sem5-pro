@@ -1,14 +1,31 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+
 import App from './App.jsx'
+import ShopMap from './pages/ShopMap/ShopMap.jsx'
 
 import './css/variables.css'
 import './css/main.css'
 import './css/resets.css'
 
 
+const router = createBrowserRouter([{
+    path: '/',
+    element: <App />,
+    errorElement: <p>Error 404</p>,
+}, {
+    path: 'shop-map/:shopId',
+    element: (
+        <App>
+            <ShopMap />
+        </App>
+    ),
+}])
+
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <RouterProvider router={router} />
+    </React.StrictMode>,
 )
