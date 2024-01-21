@@ -7,12 +7,22 @@ header>nav {
     width: max-content;
     height: 100svh;
 
-    padding-top: var(--nav-offset);
+    padding: 1.5rem;
+    padding-top: calc(var(--nav-offset) + 2.5rem);
+
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
 
     color: var(--c-gray);
     background-color: var(--c-white);
 
+
     transition: transform .1s linear;
+
+
+
+
 }
 
 header>nav[aria-hidden=true] {
@@ -26,9 +36,11 @@ header>nav button {
     font-family: inherit;
     font-size: large;
 
-    border: 3px solid #747a7b;
+    width: 25ch;
 
+    border-radius: 60px;
     background-color: #d9e1e2;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .25);
 
 
     padding: 15px 20px;
