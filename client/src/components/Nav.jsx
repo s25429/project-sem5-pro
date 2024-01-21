@@ -1,4 +1,4 @@
-
+import '../css/Nav.css'
 
 
 function Nav({ shown = false, children }) {

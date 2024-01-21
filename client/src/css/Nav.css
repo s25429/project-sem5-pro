@@ -1,0 +1,25 @@
+header > nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: -1;
+
+    width: max-content;
+    height: 100svh;
+
+    padding-top: var(--nav-offset);
+
+    color: var(--c-gray);
+    background-color: var(--c-white);
+
+    transition: transform .1s linear;
+}
+
+header > nav[aria-hidden=true] {
+    transform: translateX(100%);
+}
+
+header > nav button {
+    color: black;
+    border: 1px solid red;
+}
