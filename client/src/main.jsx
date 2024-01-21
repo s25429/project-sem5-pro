@@ -14,13 +14,12 @@ const router = createBrowserRouter([{
     path: '/',
     element: <App />,
     errorElement: <p>Error 404</p>,
+    children: [{
+        path: 'shop-map/:shopId',
+        element: <ShopMap />,
+    }]
 }, {
-    path: 'shop-map/:shopId',
-    element: (
-        <App>
-            <ShopMap />
-        </App>
-    ),
+    
 }])
 
 

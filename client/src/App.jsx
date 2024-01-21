@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 
 import Header from './components/Header'
-import MapControls from './components/MapControls'
 
 import './css/App.css'
 
@@ -13,7 +13,7 @@ function App({ children }) {
         <>
             <Header />
             <main>
-                {children}
+                <Outlet />
             </main>
         </>
     )
