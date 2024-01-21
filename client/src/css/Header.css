@@ -36,17 +36,3 @@ header>.toggler-nav:hover {
     opacity: .5;
 }
 
-header>nav button {
-    text-align: center;
-    color: #747a7b;
-    font-weight: bold;
-    font-family: inherit;
-    font-size: large;
-
-    border: 3px solid #747a7b;
-
-    background-color: #d9e1e2;
-
-
-    padding: 15px 20px;
-}
