@@ -3,8 +3,10 @@ import { useState } from 'react'
 import Logo from '../assets/logo.svg'
 import { FaEllipsisVertical } from 'react-icons/fa6'
 
+
 import '../css/Header.css'
 import Nav from './Nav'
+import Footer from './Footer'
 
 
 function Header({ title = 'Półkarzyk' }) {
@@ -19,7 +21,10 @@ function Header({ title = 'Półkarzyk' }) {
                 <button type='button'>Zgłoś błąd</button>
                 <button type='button'>Wybierz sklep</button>
                 <button type='button'>Mapa sklepu</button>
+                <Footer />
+               
             </Nav>
+
         </header>
     )
 }

@@ -19,10 +19,6 @@ header>nav {
 
 
     transition: transform .1s linear;
-
-
-
-
 }
 
 header>nav[aria-hidden=true] {
@@ -42,6 +38,17 @@ header>nav button {
     background-color: #d9e1e2;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .25);
 
-
     padding: 15px 20px;
+}
+
+footer{
+    color: #06507f;
+    display: flex;
+    margin-top: auto;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: small;
+    gap: 0.5rem;
+    
 }
