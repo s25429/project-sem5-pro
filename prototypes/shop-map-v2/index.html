@@ -6,17 +6,21 @@
     <title>Document</title>
     <script src="./main.js" type="module" defer></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
+
             height: 100svh;
             height: 100vh;
 
-            margin: 0;
-
             display: grid;
-            grid-template-rows: repeat(2, max-content);
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr;
             justify-content: center;
             align-content: center;
-            gap: 5rem;
 
             background-color: #333;
             color: #eee;
@@ -32,6 +36,8 @@
 
         .svg-container .controls {
             position: absolute;
+            top: 0;
+            left: 0;
         }
 
         svg {
@@ -42,6 +48,8 @@
     </style>
 </head>
 <body>
-    <div class="svg-container"></div>
+    <div class="svg-container">
+        <div class=".controls">lol</div>
+    </div>
 </body>
 </html>
