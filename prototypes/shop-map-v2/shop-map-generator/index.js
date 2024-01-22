@@ -120,7 +120,7 @@ function initMap(data) {
         svgEl.appendChild(group)
     })
 
-    svgEl.setAttribute('width', totalSizeX)
+    svgEl.setAttribute('width', totalSizeX + groupGapY)
     svgEl.setAttribute('height', totalSizeY)
 
     if (containerEl === null)
