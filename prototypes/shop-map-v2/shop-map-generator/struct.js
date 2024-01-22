@@ -1,4 +1,4 @@
-const struct = {
+export const struct = {
     id: Number(),
     name: String(),
     location: String(),
