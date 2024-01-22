@@ -2,6 +2,7 @@ import * as event from './events.js'
 import * as svg from './svg.js'
 import * as utils from './utils.js'
 import { parseStruct } from './struct.js'
+import { config } from './config.js'
 
 
 /**
@@ -45,18 +46,17 @@ function initMap(data) {
     if (!parseStruct(data)) 
         return errorResult
 
-    // props
     let totalSizeX = 0
     let totalSizeY = 0
     let groupOffsetX = 0
     let groupOffsetY = 0
-    let groupGapX = 0
-    let groupGapY = 10
-    let textOffsetX = 0
-    let textOffsetY = -6
-    let textLineHeight = 20
+    let groupGapX = 0 // unused
+    let groupGapY = config?.group?.gap || 10
+    let textOffsetX = 0 // unused
+    let textOffsetY = config?.text?.offset || -6
+    let textLineHeight = config?.text?.lineHeight || 20
 
-    const containerEl = document.querySelector('.svg-container')
+    const containerEl = document.querySelector(config?.container || '.svg-container')
     const svgEl = svg.createSVG()
     const objectsPerGroup = utils.groupBy(data.objects, 'group')
 
@@ -68,8 +68,8 @@ function initMap(data) {
             y: groupOffsetY,
             width: strokeWidth,
             height: strokeHeight,
-            strokeColor: 'black',
-            strokeWidth: 1,
+            strokeColor: config?.group?.border?.color || 'black',
+            strokeWidth: config?.group?.border?.width || 2,
         })
 
         const map = svg.createGroup({
@@ -77,17 +77,20 @@ function initMap(data) {
         })
 
         objs.forEach(obj => {
-            const rect = svg.createRoundedRect({
+            const rectArgs = {
                 x: obj.x + groupOffsetX,
                 y: obj.y + groupOffsetY,
                 width: obj.width,
                 height: obj.height,
-                fillColor: 'blue',
-                radius: 8,
+                fillColor: config?.rect?.color || 'black',
+                radius: config?.rect?.borderRadius || 4,
                 attrs: {
                     'data-category': obj.category,
                 },
-            })
+            }
+            const rect = config?.roundedCorners 
+                ? svg.createRoundedRect(rectArgs) 
+                : svg.createRect(rectArgs) 
 
             map.appendChild(rect)
         })
@@ -98,7 +101,7 @@ function initMap(data) {
             text: groupName,
             attrs: {
                 'class': 'map-group',
-                'font-size': '1rem',
+                'font-size': config?.font?.size || '16px',
             },
         })
 

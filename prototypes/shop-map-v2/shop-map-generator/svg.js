@@ -166,7 +166,7 @@ export function createDropShadowFilter({ id, x = 0, y = 0, width = 0, height = 0
     filter.setAttribute('filterUnits', filterUnits)
 
     filter.appendChild(createGaussianBlurFilter({}))
-    filter.appendChild(createOffsetFilter({ x: 5, y: 5 }))
+    filter.appendChild(createOffsetFilter({ x: 5, y: 5 })) // TODO: change
     filter.appendChild(createOffsetFilter({ x: -5, y: -5 }))
     filter.appendChild(createNodeMergeFilter({}))
 
