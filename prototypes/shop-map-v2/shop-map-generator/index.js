@@ -4,13 +4,18 @@ import * as utils from './utils.js'
 import { parseStruct } from './struct.js'
 
 
-export function createMap(data = {}) {
+/**
+ * Creates an interactive map from given data. 
+ * @param {typeof struct} data - structure in struct.js
+ * @note to configure additional options, check config.js
+ */
+export function createMap(data) {
     const { containerEl, svgEl } = initMap(data)
 
-    containerEl?.addEventListener('mousedown', onMouseDown)
-    containerEl?.addEventListener('mouseup', onMouseUp)
-    containerEl?.addEventListener('mouseleave', onMouseLeave)
-    containerEl?.addEventListener('mousemove', onMouseMove)
+    containerEl?.addEventListener('mousedown', onMouseDown, { once: true })
+    containerEl?.addEventListener('mouseup', onMouseUp, { once: true })
+    containerEl?.addEventListener('mouseleave', onMouseLeave, { once: true })
+    containerEl?.addEventListener('mousemove', onMouseMove, { once: true })
 
     function onMouseDown(e) {
         event.onGrab(e)
@@ -29,6 +34,11 @@ export function createMap(data = {}) {
     }
 }
 
+/**
+ * Initializes all elements for the map and appends them to specified document element
+ * @param {typeof struct} data 
+ * @returns 
+ */
 function initMap(data) {
     const errorResult = { containerEl: null, svgEl: null }
 
