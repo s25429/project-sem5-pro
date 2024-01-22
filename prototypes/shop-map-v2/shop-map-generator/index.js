@@ -97,7 +97,7 @@ function initMap(data) {
         totalSizeY += textLineHeight + strokeHeight + groupGapY // TODO: adds a gap for the last element as well
 
         const group = svg.createGroup({
-            attes: {
+            attrs: {
                 'data-group': groupName,
                 'transform': `translate(0, ${textLineHeight * (index + 1)})`, // TODO: test this
             },
