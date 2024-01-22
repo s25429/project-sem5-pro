@@ -146,7 +146,7 @@ export function createDefs({ attrs, children }) {
 
 /**
  * Creates SVG Filter effect for drop shadow
- * @param {{ id: number, x?: number, y?: number, width?: number, height?: number, filterUnits?: 'userSpaceOnUse' | 'objectBoundingBox' }} arg - type hint 
+ * @param {{ id: string, x?: string, y?: string, width?: string, height?: string, filterUnits?: 'userSpaceOnUse' | 'objectBoundingBox' }} arg - type hint 
  * @param id - unique identifier for filter
  * @param x - filter instance left position, default=0
  * @param y - filter instance top position, default=0
@@ -155,7 +155,7 @@ export function createDefs({ attrs, children }) {
  * @param filterUnits - coordinate system for positional and size attributes, default=userSpaceOnUse
  * @returns 
  */
-export function createDropShadowFilter({ id, x = 0, y = 0, width = 0, height = 0, filterUnits = 'userSpaceOnUse' }) {
+export function createDropShadowFilter({ id, x = '0', y = '0', width = '0', height = '0', filterUnits = 'userSpaceOnUse' }) {
     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter')
 
     filter.setAttribute('id', id)

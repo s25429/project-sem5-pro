@@ -1,6 +1,6 @@
 export const config = {
     container: '.svg-container',
-    shadows: true,
+    shadows: false,
     roundedCorners: true,
     group: {
         gap: 10,

@@ -58,8 +58,26 @@ function initMap(data) {
 
     const containerEl = document.querySelector(config?.container || '.svg-container')
     const svgEl = svg.createSVG()
-    const objectsPerGroup = utils.groupBy(data.objects, 'group')
+    
+    let shadowFilter = null
 
+    if (config?.shadows) {
+        shadowFilter = svg.createDropShadowFilter({
+            id: 'f1',
+            x: '-40%',
+            y: '-40%',
+            width: '180%',
+            height: '180%',
+        })
+
+        const defs = svg.createDefs({
+            children: [shadowFilter.filter]
+        })
+
+        svgEl.appendChild(defs)
+    }
+
+    const objectsPerGroup = utils.groupBy(data.objects, 'group')
     Object.entries(objectsPerGroup).forEach(([groupName, objs], index) => {
         const [strokeWidth, strokeHeight] = utils.getContainedSize(objs)
 
@@ -86,6 +104,7 @@ function initMap(data) {
                 radius: config?.rect?.borderRadius || 4,
                 attrs: {
                     'data-category': obj.category,
+                    ...(config?.shadows ? { 'style': `filter: url(#${shadowFilter.id});` } : {})
                 },
             }
             const rect = config?.roundedCorners 
