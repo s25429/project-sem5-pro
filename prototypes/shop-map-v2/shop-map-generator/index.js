@@ -30,10 +30,10 @@ export function createMap(data = {}) {
 }
 
 function initMap(data) {
-    if (!parseStruct(data)) {
-        console.error('Wrong structure')
-        return { containerEl: null, svgEl: null }
-    }
+    const errorResult = { containerEl: null, svgEl: null }
+
+    if (!parseStruct(data)) 
+        return errorResult
 
     // props
     let totalSizeX = 0
@@ -111,7 +111,7 @@ function initMap(data) {
     svgEl.setAttribute('height', totalSizeY)
 
     if (containerEl === null)
-        return { containerEl: null, svgEl: null }
+        return errorResult
 
     containerEl.appendChild(svgEl)
 

@@ -38,7 +38,7 @@ export const parseStruct = (data) => {
     if (flattenedResults.every(check => check === true)) 
         return true
 
-    console.error(results)
+    console.error('Parsing result:', results)
     return false
 }
 
