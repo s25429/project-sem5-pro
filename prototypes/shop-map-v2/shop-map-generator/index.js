@@ -13,10 +13,10 @@ import { config } from './config.js'
 export function createMap(data) {
     const { containerEl, svgEl } = initMap(data)
 
-    containerEl?.addEventListener('mousedown', onMouseDown, { once: true })
-    containerEl?.addEventListener('mouseup', onMouseUp, { once: true })
-    containerEl?.addEventListener('mouseleave', onMouseLeave, { once: true })
-    containerEl?.addEventListener('mousemove', onMouseMove, { once: true })
+    containerEl?.addEventListener('mousedown', onMouseDown)
+    containerEl?.addEventListener('mouseup', onMouseUp)
+    containerEl?.addEventListener('mouseleave', onMouseLeave)
+    containerEl?.addEventListener('mousemove', onMouseMove)
 
     function onMouseDown(e) {
         event.onGrab(e)
