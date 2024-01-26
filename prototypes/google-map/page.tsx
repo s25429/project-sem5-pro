@@ -16,9 +16,9 @@ export default function Intro(){
     const [open, setOpen] = useState(false);
 
     return(
-        <APIProvider apiKey={"AIzaSyDnKkSP0VlZoUMdIitJ8A3rwuJWQjlIXA4"}>
+        <APIProvider apiKey={"-------"}>
             <div style={{height: "100vh", width:"100%"}}>
-                <Map zoom={15} center={position} mapId={"a2c09c5660267b55"}
+                <Map zoom={15} center={position} mapId={"----------"}
                 >
                     <AdvancedMarker position={position} onClick={() => setOpen(true)}>
                         <Pin
