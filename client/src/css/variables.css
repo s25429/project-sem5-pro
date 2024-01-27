@@ -1,5 +1,25 @@
 :root {
     --c-white: #fefefe;
-    --c-gray: #747a7b;
+    --c-black: #414141;
+    --c-dark-gray: #747a7b;
+    --c-light-gray: #d9e1e2;
     --c-blue: #06507f;
+    --c-red: #bb2551;
+    --c-yellow: #e1f100;
+    --c-brown: #3f2021;
+
+    --nav-offset: 6rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-white: #fefefe;
+        --c-black: #414141;
+        --c-dark-gray: #747a7b;
+        --c-light-gray: #d9e1e2;
+        --c-blue: #06507f;
+        --c-red: #bb2551;
+        --c-yellow: #e1f100;
+        --c-brown: #3f2021;
+    }
 }

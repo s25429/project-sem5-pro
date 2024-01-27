@@ -6,21 +6,23 @@ import App from './App.jsx'
 import ShopMap from './pages/ShopMap/ShopMap.jsx'
 
 import './css/variables.css'
-import './css/main.css'
 import './css/resets.css'
+import './css/main.css'
 
 
-const router = createBrowserRouter([{
-    path: '/',
-    element: <App />,
-    errorElement: <p>Error 404</p>,
-    children: [{
-        path: 'shop-map/:shopId',
-        element: <ShopMap />,
-    }]
-}, {
-    
-}])
+const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <App />,
+        errorElement: <p>Error 404</p>,
+        children: [
+            {
+                path: 'shop-map/:shopId',
+                element: <ShopMap />,
+            }
+        ]
+    }
+])
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

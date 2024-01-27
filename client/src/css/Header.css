@@ -1,8 +1,11 @@
 header {
-    --nav-offset: 6rem;
+    position: fixed;
+    top: 0;
+    left: 0;
 
     padding: 1rem 2rem;
 
+    width: 100%;
     height: var(--nav-offset);
 
     display: flex;
@@ -13,26 +16,25 @@ header {
     border-radius: 0 0 60px 60px;
 }
 
-header>img.logo {
+header > img.logo {
     width: 2rem;
     display: block;
     height: auto;
 }
 
-header>h1 {
+header > h1 {
     flex: 1;
     text-align: center;
     font-size: 1.5rem;
 }
 
-header>.toggler-nav {
-    width: 2.5rem;
+header > .toggler-nav {
+    width: 2.4rem;
     height: auto;
     cursor: pointer;
     transition: opacity .1s linear;
 }
 
-header>.toggler-nav:hover {
+header > .toggler-nav:hover {
     opacity: .5;
 }
-

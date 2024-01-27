@@ -6,9 +6,7 @@ import Header from './components/Header'
 import './css/App.css'
 
 
-function App({ children }) {
-    const [count, setCount] = useState(0) // this is clicks on page by user
-
+function App() {
     return (
         <>
             <Header />

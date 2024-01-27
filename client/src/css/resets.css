@@ -2,12 +2,18 @@
     box-sizing: border-box;
 }
 
+body {
+    margin: 0;
+}
+
 a {
     text-decoration: none;
     color: currentColor;
 }
 
-button, input {
+button, 
+input, 
+textarea {
     padding: 0;
     border: none;
     outline: none;
@@ -17,8 +23,4 @@ button, input {
 
 button {
     cursor: pointer;
-}
-
-body {
-    margin: 0;
 }
