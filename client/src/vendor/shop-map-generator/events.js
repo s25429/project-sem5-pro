@@ -15,7 +15,15 @@ let sourceY = 0
  */
 export function onGrab(e) {
     isMoving = true
-    reset(e)
+
+    const [posX, posY] = getPos(e)
+
+    startX = posX
+    startY = posY
+    offsetX = 0
+    offsetY = 0
+    currentX = 0
+    currentY = 0
 }
 
 /**
@@ -23,15 +31,18 @@ export function onGrab(e) {
  * @param {MouseEvent} e - mouse event
  */
 export function onDrop(e) {
-    onLeave()
-    reset(e)
+    isMoving = false
+
+    sourceX = currentX
+    sourceY = currentY
 }
 
 /**
  * Handles what should happen on mouse leaving map area
  */
-export function onLeave() {
+export function onLeave(e) {
     isMoving = false
+
     sourceX = currentX
     sourceY = currentY
 }
@@ -45,8 +56,10 @@ export function onMove(e, svg) {
     if (!isMoving)
         return
 
-    offsetX = e.layerX - startX
-    offsetY = e.layerY - startY
+    const [posX, posY] = getPos(e)
+
+    offsetX = posX- startX
+    offsetY = posY - startY
 
     currentX = sourceX + offsetX
     currentY = sourceY + offsetY
@@ -59,14 +72,13 @@ export function onMove(e, svg) {
 }
 
 /**
- * Resets data for movement
- * @param {MouseEvent} e - mouse event
+ * Get position of the mouse cursor or touch cursor
+ * @param {MouseEvent} e 
+ * @returns x and y coordinates in an array
  */
-export function reset(e) {
-    startX = e.layerX
-    startY = e.layerY
-    offsetX = 0
-    offsetY = 0
-    currentX = 0
-    currentY = 0
+function getPos(e) {
+    return [
+        e?.touches?.[0]?.pageX ?? e?.layerX,
+        e?.touches?.[0]?.pageY ?? e?.layerY,
+    ]
 }
