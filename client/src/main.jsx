@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import App from './App.jsx'
 import ShopMap from './pages/ShopMap/ShopMap.jsx'
+import Intro from './pages/GoogleMap/GoogleMap.jsx'
 
 import './css/variables.css'
 import './css/resets.css'
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
             {
                 path: 'shop-map/:shopId',
                 element: <ShopMap />,
+            },
+            {
+                path: 'google-map/',
+                element: <Intro />,
             }
         ]
     }
