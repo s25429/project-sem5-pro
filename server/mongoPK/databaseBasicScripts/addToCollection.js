@@ -1,59 +1,62 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb')
 
-const uri = 'mongodb://localhost:27017';
-const dbName = 'Test';
+
+const uri = 'mongodb://localhost:27017'
+const dbName = 'Test'
+
 
 async function insertData() {
-    const client = new MongoClient(uri);
+    const client = new MongoClient(uri)
 
     try {
-        await client.connect();
-        console.log('Connected to the database');
+        await client.connect()
+        console.log('Connected to the database')
 
-        const db = client.db(dbName);
-        const collection = db.collection('test');
-        const sequenceCollection = db.collection('sequence');
+        const db = client.db(dbName)
+        const collection = db.collection('test')
+        const sequenceCollection = db.collection('sequence')
 
         // Find and update the sequence for shops
         const shopSequenceDoc = await sequenceCollection.findOneAndUpdate(
             { name: 'shopId' },
             { $inc: { value: 1 } },
             { returnDocument: 'after', upsert: true }
-        );
+        )
 
         // Find and update the sequence for products
         const productSequenceDoc = await sequenceCollection.findOneAndUpdate(
             { name: 'productId', shopId: shopSequenceDoc.value },
             { $inc: { value: 1 } },
             { returnDocument: 'after', upsert: true }
-        );
+        )
 
         // Find and update the sequence for maps
         const mapSequenceDoc = await sequenceCollection.findOneAndUpdate(
             { name: 'mapId', shopId: shopSequenceDoc.value },
             { $inc: { value: 1 } },
             { returnDocument: 'after', upsert: true }
-        );
+        )
 
-        let nextShopId;
-        let nextMapId;
-        let nextProductId;
+        let nextShopId
+        let nextMapId
+        let nextProductId
 
         if (shopSequenceDoc && productSequenceDoc && mapSequenceDoc) {
             // If the documents exist, increment the values
-            nextShopId = shopSequenceDoc.value;
-            nextMapId = mapSequenceDoc.value;
-            nextProductId = productSequenceDoc.value;
-        } else {
+            nextShopId = shopSequenceDoc.value
+            nextMapId = mapSequenceDoc.value
+            nextProductId = productSequenceDoc.value
+        } 
+        else {
             // If the documents don't exist, insert new ones with values 1
             await sequenceCollection.insertMany([
                 { name: 'shopId', value: 1 },
                 { name: 'productId', value: 1 },
                 { name: 'mapId', value: 1, shopId: 1 },
-            ]);
-            nextShopId = 1;
-            nextMapId = 1;
-            nextProductId = 1;
+            ])
+            nextShopId = 1
+            nextMapId = 1
+            nextProductId = 1
         }
 
         const document1 = {
@@ -102,18 +105,22 @@ async function insertData() {
                     active: true,
                 },
             ],
-        };
+        }
 
-        const result = await collection.insertOne(document1);
+        const result = await collection.insertOne(document1)
 
-        console.log(`${result.insertedCount} document inserted`);
-        console.log('Inserted Shop ID:', nextShopId);
+        console.log(`${result.insertedCount} document inserted`)
+        console.log('Inserted Shop ID:', nextShopId)
 
-    } finally {
-        await client.close();
-        console.log('Connection closed');
+    } 
+    catch (error) {
+        console.error('Error:', error)
+    } 
+    finally {
+        await client.close()
+        console.log('Connection closed')
     }
 }
 
 // Execute the script
-insertData();
+insertData()

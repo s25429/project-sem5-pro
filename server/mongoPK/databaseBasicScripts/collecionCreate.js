@@ -1,4 +1,5 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb')
+
 
 /**
  * Creates a new collection in the specified database.
@@ -12,25 +13,27 @@ const { MongoClient } = require('mongodb');
  * @throws {Error} If there is an error during the collection creation process.
  */
 async function createCollection(uri, databaseName, collectionName) {
-  const client = new MongoClient(uri);
+    const client = new MongoClient(uri)
 
-  try {
-    await client.connect();
-    console.log('Connected to MongoDB');
+    try {
+        await client.connect()
+        console.log('Connected to MongoDB')
 
-    // Access the specified database
-    const db = client.db(databaseName);
+        const db = client.db(databaseName)
 
-    // Create a new collection
-    await db.createCollection(collectionName);
+        await db.createCollection(collectionName)
 
-    console.log(`Collection '${collectionName}' created in the '${databaseName}' database.`);
-  } finally {
-    await client.close();
-    console.log('Connection closed.');
-  }
+        console.log(`Collection '${collectionName}' created in the '${databaseName}' database.`)
+    } 
+    catch (error) {
+        console.error('Error:', error)
+    }
+    finally {
+        await client.close()
+        console.log('Connection closed.')
+    }
 }
 
 // Example usage:
 // Replace 'mongodb://localhost:27017', 'Test', and 'MyCollection' with your desired values
-createCollection('mongodb://localhost:27017', 'Test', 'MyCollection').catch(console.error);
+createCollection('mongodb://localhost:27017', 'Test', 'MyCollection').catch(console.error)
