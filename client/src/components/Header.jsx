@@ -13,19 +13,19 @@ function Header({ title = 'Półkarzyk' }) {
     const [toggleNav, setToggleNav] = useState(false)
 
     return (
-        <header>
-            <img className='logo' src={Logo} alt='logo' />
-            <h1>{title}</h1>
-            <FaEllipsisVertical onClick={() => setToggleNav(!toggleNav)} className='toggler-nav' />
+        <>
+            <header>
+                <img className='logo' src={Logo} alt='logo' />
+                <h1>{title}</h1>
+                <FaEllipsisVertical onClick={() => setToggleNav(!toggleNav)} className='toggler-nav' />
+            </header>
             <Nav shown={toggleNav}>
                 <button type='button'>Zgłoś błąd</button>
                 <button type='button'>Wybierz sklep</button>
                 <button type='button'>Mapa sklepu</button>
                 <Footer />
-               
             </Nav>
-
-        </header>
+        </>
     )
 }
 
