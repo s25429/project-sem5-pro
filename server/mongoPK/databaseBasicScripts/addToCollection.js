@@ -111,7 +111,6 @@ async function insertData() {
 
         console.log(`${result.insertedCount} document inserted`)
         console.log('Inserted Shop ID:', nextShopId)
-
     } 
     catch (error) {
         console.error('Error:', error)

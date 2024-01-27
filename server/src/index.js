@@ -3,10 +3,10 @@ const { MongoClient } = require('mongodb')
 
 
 const app = express()
-const port = process.env.PORT || 5172
+const port = process.env.SERVER_PORT || 5172
 
-const uri = 'mongodb://localhost:27017'
-const dbName = 'Test'
+const uri = `mongodb://${process.env.DB_HOST || '127.0.0.1'}:${process.env.DB_PORT || '27017'}`
+const dbName = process.env.DB_NAME || 'db'
 
 
 app.use(express.json())
@@ -34,65 +34,50 @@ app.get('/healthcheck', (req, res) => {
 })
 
 app.get('/healthcheck/db', async (req, res) => {
-    const client = new MongoClient(uri)
+    const { ping } = require('./db/database')
 
-    try {
-        await client.connect()
-        console.log('Connected to the database')
+    const success = await ping()
 
-        const db = client.db(dbName)
-        const adminCommand = { ping: 1 }
-
-        // Use the admin database for the ping command
-        const pingResult = await db.admin().command(adminCommand)
-
-        if (pingResult.ok) {
-            res.status(200).send('Database connection is okay')
-        } 
-        else {
-            res.status(500).send('Database connection error')
-        }
-
-    } 
-    catch (error) {
-        console.error('Error connecting to the database:', error)
-        res.status(500).send('Database connection error')
-    } 
-    finally {
-        await client.close()
-        console.log('Connection closed')
-    }
+    if (success)
+        res.status(200).json({ message: 'Database is alive' })
+    else
+        res.status(500).json({ error: 'Connection could not be esablished' })
 })
 
-app.get('/shopsByIds/:id', async (req, res) => {
+app.get('/shops/:id', async (req, res) => {
+    const { execute } = require('./db/database')
+
     const { id } = req.params
 
-    const client = new MongoClient(uri)
+    // const result = await execute(client => {
+    //     const collection
+    // })
 
-    try {
-        await client.connect()
-        console.log('Connected to the database')
+    
+    // try {
+    //     await client.connect()
+    //     console.log('Connected to the database')
 
-        const db = client.db(dbName)
-        const collection = db.collection('test')
+    //     const db = client.db(dbName)
+    //     const collection = db.collection('test')
 
-        const shop = await getShopById(collection, id)
+    //     const shop = await getShopById(collection, id)
 
-        if (shop) {
-            res.status(200).json(shop)
-        } else {
-            res.status(404).json({ error: 'Shop not found' })
-        }
+    //     if (shop) {
+    //         res.status(200).json(shop)
+    //     } else {
+    //         res.status(404).json({ error: 'Shop not found' })
+    //     }
 
-    } 
-    catch (error) {
-        console.error('Error retrieving shop:', error)
-        res.status(500).json({ error: 'Internal server error' })
-    } 
-    finally {
-        await client.close()
-        console.log('Connection closed')
-    }
+    // } 
+    // catch (error) {
+    //     console.error('Error retrieving shop:', error)
+    //     res.status(500).json({ error: 'Internal server error' })
+    // } 
+    // finally {
+    //     await client.close()
+    //     console.log('Connection closed')
+    // }
 })
 
 app.get('/mapGeneration/:id', async (req, res) => {
@@ -144,6 +129,11 @@ app.get('/mapGeneration/:id', async (req, res) => {
         await client.close()
         console.log('Connection closed')
     }
+})
+
+app.get('/db/sample-data', (req, res) => {
+    const { insertSampleData } = require('./db/scripts/samples')
+    insertSampleData(uri, dbName, 'shops', { clearCollection: true })
 })
 
 
