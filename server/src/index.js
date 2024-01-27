@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const { MongoClient } = require('mongodb')
 
@@ -33,7 +34,7 @@ app.get('/healthcheck', (req, res) => {
     res.send('I\'m alive')
 })
 
-app.get('/healthcheck/db', async (req, res) => {
+app.get('/db/healthcheck', async (req, res) => {
     const { ping } = require('./db/database')
 
     const success = await ping()
@@ -44,43 +45,56 @@ app.get('/healthcheck/db', async (req, res) => {
         res.status(500).json({ error: 'Connection could not be esablished' })
 })
 
-app.get('/shops/:id', async (req, res) => {
+app.get('/db/shops', async (req, res) => {
     const { execute } = require('./db/database')
+
+    if (process.env.DB_NAME === undefined) {
+        res.status(500).json({ error: 'Server error' })
+        console.error('Env var DB_NAME = undefined')
+        return
+    }
+
+    const result = await execute(async client => {
+        const collection = client.db(process.env.DB_NAME).collection('shops')
+        const result = await collection.find().toArray()
+        return result
+    })
+
+    if (result)
+        res.status(200).json(result)
+    else
+        res.status(404).json({ error: 'Collection not found' })
+})
+
+app.get('/db/shops/:id', async (req, res) => {
+    const { execute } = require('./db/database')
+
+    if (process.env.DB_NAME === undefined) {
+        console.error('Env var DB_NAME = undefined')
+        res.status(500).json({ error: 'Server error' })
+        return
+    }
 
     const { id } = req.params
 
-    // const result = await execute(client => {
-    //     const collection
-    // })
+    if (isNaN(id)) {
+        res.status(400).json({ error: 'Wrong parameter' })
+        return
+    }
 
-    
-    // try {
-    //     await client.connect()
-    //     console.log('Connected to the database')
+    const result = await execute(async client => {
+        const collection = client.db(process.env.DB_NAME).collection('shops')
+        const result = await collection.findOne({ id: parseInt(id) })
+        return result
+    })
 
-    //     const db = client.db(dbName)
-    //     const collection = db.collection('test')
-
-    //     const shop = await getShopById(collection, id)
-
-    //     if (shop) {
-    //         res.status(200).json(shop)
-    //     } else {
-    //         res.status(404).json({ error: 'Shop not found' })
-    //     }
-
-    // } 
-    // catch (error) {
-    //     console.error('Error retrieving shop:', error)
-    //     res.status(500).json({ error: 'Internal server error' })
-    // } 
-    // finally {
-    //     await client.close()
-    //     console.log('Connection closed')
-    // }
+    if (result)
+        res.status(200).json(result)
+    else
+        res.status(404).json({ error: 'Document not found' })
 })
 
-app.get('/mapGeneration/:id', async (req, res) => {
+app.get('/db/map/:id/parsed', async (req, res) => {
     const { id } = req.params
 
     const client = new MongoClient(uri)
@@ -90,7 +104,7 @@ app.get('/mapGeneration/:id', async (req, res) => {
         console.log('Connected to the database')
 
         const db = client.db(dbName)
-        const collection = db.collection('test')
+        const collection = db.collection('shops')
 
         const shop = await getShopById(collection, id)
 
@@ -129,11 +143,6 @@ app.get('/mapGeneration/:id', async (req, res) => {
         await client.close()
         console.log('Connection closed')
     }
-})
-
-app.get('/db/sample-data', (req, res) => {
-    const { insertSampleData } = require('./db/scripts/samples')
-    insertSampleData(uri, dbName, 'shops', { clearCollection: true })
 })
 
 

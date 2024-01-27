@@ -36,4 +36,4 @@ async function createCollection(uri, databaseName, collectionName) {
 
 // Example usage:
 // Replace 'mongodb://localhost:27017', 'Test', and 'MyCollection' with your desired values
-createCollection('mongodb://localhost:27017', 'Test', 'MyCollection').catch(console.error)
+createCollection('mongodb://localhost:27017', 'polkarzyk', 'shops').catch(console.error)

@@ -33,4 +33,4 @@ async function createDatabase(uri, databaseName) {
 
 // Example usage:
 // Replace 'mongodb://localhost:27017' and 'PKdatabase' with your desired values
-createDatabase('mongodb://localhost:27017', 'PKdatabase')
+createDatabase('mongodb://localhost:27017', 'polkarzyk')

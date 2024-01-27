@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb')
 
 
 const uri = 'mongodb://localhost:27017'
-const dbName = 'Test'
+const dbName = 'polkarzyk'
 
 
 async function insertData() {
@@ -13,7 +13,7 @@ async function insertData() {
         console.log('Connected to the database')
 
         const db = client.db(dbName)
-        const collection = db.collection('test')
+        const collection = db.collection('shops')
         const sequenceCollection = db.collection('sequence')
 
         // Find and update the sequence for shops
@@ -62,7 +62,7 @@ async function insertData() {
         const document1 = {
             id: nextShopId,
             name: 'Shop4',
-            location: 'Location4',
+            location: '54.35126275796481,18.654804568859817',
             map: [
                 {
                     id: nextMapId++,

@@ -29,7 +29,6 @@ async function execute(callback) {
 }
 
 /**
- * 
  * @returns {Promise<boolean>}
  */
 async function ping() {
@@ -51,35 +50,8 @@ async function ping() {
     return result
 }
 
-/**
- * Creates a new database with the specified name.
- * @param {string} uri - The MongoDB connection string.
- * @param {string} databaseName - The name of the database to create.
- * @returns {Promise<void>} A Promise that resolves when the database is created.
- */
-async function create(uri, databaseName) {
-    const client = new MongoClient(uri)
-
-    try {
-        await client.connect()
-        console.log('Connected to MongoDB')
-
-        // Create a new database
-        const db = client.db(databaseName)
-        console.log(`Database '${databaseName}' created successfully.`)
-    } 
-    catch (error) {
-        console.error('Error:', error)
-    }
-    finally {
-        await client.close()
-        console.log('Connection closed.')
-    }
-}
-
 
 module.exports = {
     execute,
     ping,
-    create,
 }
