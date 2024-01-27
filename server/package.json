@@ -4,7 +4,8 @@
     "description": "api",
     "main": "index.js",
     "scripts": {
-        "start": "node src/index.js"
+        "start": "node src/index.js",
+        "insert-sample-data": "node mongoPK/databaseBasicScripts/addToCollection.js"
     },
     "license": "MIT",
     "dependencies": {
