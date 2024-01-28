@@ -1,5 +1,5 @@
 export const struct = {
-    id: Number(),
+    id: String(),
     name: String(),
     location: String(),
     objects: [{
@@ -19,7 +19,7 @@ export const struct = {
  */
 export const parseStruct = (data) => {
     const results = {
-        id:       parse(data?.id,       struct.id,       { canBeZero: true }                      ),
+        id:       parse(data?.id,       struct.id,                                                ),
         name:     parse(data?.name,     struct.name                                               ),
         location: parse(data?.location, struct.location, { checks: [{ fn: parseLocationString }] }),
 

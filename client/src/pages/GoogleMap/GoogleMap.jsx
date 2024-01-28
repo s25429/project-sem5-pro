@@ -56,7 +56,7 @@ export default function Intro(){
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Szeroka 89, 80-835 Gdańsk</p>
                                 <button type='button' style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
-                                    <Link to={`../shop-map/1`}>
+                                    <Link to={`../shop-map/65b6a7b387abfc32801319b2`}>
                                         Przejdź do sklepu
                                     </Link>
                                 </button>
@@ -78,7 +78,7 @@ export default function Intro(){
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Zawodników 4, 80-729 Gdańsk</p>
                                 <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
-                                    <Link to={`../shop-map/1`}>
+                                    <Link to={`../shop-map/65b6a7b387abfc32801319b3`}>
                                         Przejdź do sklepu
                                     </Link>
                                 </button>
@@ -100,7 +100,7 @@ export default function Intro(){
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Stągiewna 12/LOK. 11, 80-750 Gdańsk</p>
                                 <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
-                                    <Link to={`../shop-map/1`}>
+                                    <Link to={`../shop-map/65b6a7b387abfc32801319b4`}>
                                         Przejdź do sklepu
                                     </Link>
                                 </button>

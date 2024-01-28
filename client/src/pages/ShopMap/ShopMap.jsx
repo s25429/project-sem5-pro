@@ -29,7 +29,7 @@ const mapConfig = {
 
 export function loader({ params }) {
     const id = params?.shopId || null
-    return { shopId: isNaN(id) ? null : parseInt(id) }
+    return { shopId: id }
 }
 
 function ShopMap() {
