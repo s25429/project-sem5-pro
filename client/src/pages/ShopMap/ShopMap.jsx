@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
+import { useLoaderData } from 'react-router-dom'
 
 import Filter from '../../components/Filter'
+
+import { useShopIdProvider } from '../../context/ShopIdProvider'
 
 import { config } from '../../vendor/shop-map-generator/config'
 import { createMap } from '../../vendor/shop-map-generator'
@@ -24,14 +27,22 @@ const mapConfig = {
 }
 
 
+export function loader({ params }) {
+    const id = params?.shopId || null
+    return { shopId: isNaN(id) ? null : parseInt(id) }
+}
+
 function ShopMap() {
+    const { shopId } = useLoaderData()
+    const { setShopId } = useShopIdProvider()
+
     const onProductSearch = async (product) => {
         const productWasCategory = toggleAisle(product)
 
         if (productWasCategory)
             return
 
-        const response = await fetch(`/db/shops/${1}/product/${product}`)
+        const response = await fetch(`/db/shops/${shopId}/product/${product}`)
         const data = await response.json()
 
         if (data?.error)
@@ -72,6 +83,8 @@ function ShopMap() {
     }
 
     useEffect(() => {
+        setShopId(shopId)
+
         config.container = mapConfig.container
         config.rect.color = mapConfig.rect.color
         config.group.border.color = mapConfig.group.border.color
@@ -80,7 +93,7 @@ function ShopMap() {
         loadMapDataFromServer()
 
         async function loadMapDataFromServer() {
-            const response = await fetch('/db/map/1/parsed')
+            const response = await fetch(`/db/map/${shopId}/parsed`)
             const data = await response.json()
 
             createMap(data)

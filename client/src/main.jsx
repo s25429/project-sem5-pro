@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import App from './App.jsx'
-import ShopMap from './pages/ShopMap/ShopMap.jsx'
+import ShopMap, { loader as shopIdLoader } from './pages/ShopMap/ShopMap.jsx'
 import Intro from './pages/GoogleMap/GoogleMap.jsx'
+import ReportBug from './pages/ReportBug/ReportBug.jsx'
 
 import './css/variables.css'
 import './css/resets.css'
 import './css/main.css'
-import ReportBug from './pages/ReportBug/ReportBug.jsx'
 
 
 const router = createBrowserRouter([
@@ -21,6 +21,7 @@ const router = createBrowserRouter([
             {
                 path: 'shop-map/:shopId',
                 element: <ShopMap />,
+                loader: shopIdLoader,
             },
             {
                 path: 'google-map',
