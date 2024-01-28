@@ -110,6 +110,7 @@ function initMap(data) {
             attrs: {
                 'class': 'map-group',
                 'font-size': config?.font?.size || '16px',
+                'fill': config?.font?.color || 'black',
             },
         })
 

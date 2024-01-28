@@ -15,6 +15,7 @@ export const config = {
     },
     font: {
         size: '1rem',
+        color: 'black',
     },
     text: {
         offset: -6,
