@@ -30,6 +30,10 @@
     width: 100%;
     font-size: .9rem;
 }
+.form-filter .filter-input,
+.form-filter .filter-settings > button[type=button] {
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .25);
+}
 
 .form-filter .filter-input > button[type=submit] {
     color: var(--c-dark-gray);
