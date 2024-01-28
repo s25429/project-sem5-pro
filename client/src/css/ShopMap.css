@@ -1,10 +1,5 @@
-main {
-    padding-top: var(--nav-offset);
-    z-index: 1;
-}
-
 .form-filter {
-    margin-top: 1rem;
+    margin-top: calc(var(--nav-offset) + 1rem);
 }
 
 #shop-map {

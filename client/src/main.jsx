@@ -22,7 +22,7 @@ const router = createBrowserRouter([
                 element: <ShopMap />,
             },
             {
-                path: 'google-map/',
+                path: 'google-map',
                 element: <Intro />,
             }
         ]

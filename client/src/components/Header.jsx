@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import Logo from '../assets/logo.svg'
 import { FaEllipsisVertical } from 'react-icons/fa6'
@@ -20,9 +21,15 @@ function Header({ title = 'Półkarzyk' }) {
                 <FaEllipsisVertical onClick={() => setToggleNav(!toggleNav)} className='toggler-nav' />
             </header>
             <Nav shown={toggleNav}>
-                <button type='button'>Zgłoś błąd</button>
-                <button type='button'>Wybierz sklep</button>
-                <button type='button'>Mapa sklepu</button>
+                <Link onClick={() => setToggleNav(false)}>
+                    <button type='button'>Zgłoś błąd</button>
+                </Link>
+                <Link to='google-map' onClick={() => setToggleNav(false)}>
+                    <button type='button'>Wybierz sklep</button>
+                </Link>
+                <Link to='shop-map/1' onClick={() => setToggleNav(false)}>
+                    <button type='button'>Mapa sklepu</button>
+                </Link>
                 <Footer />
             </Nav>
         </>
