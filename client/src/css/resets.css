@@ -17,6 +17,8 @@ textarea {
     padding: 0;
     border: none;
     outline: none;
+    color: currentColor;
+    font-family: inherit;
     background-color: transparent;
     font-family: inherit;
 }

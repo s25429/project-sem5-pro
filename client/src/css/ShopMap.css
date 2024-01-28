@@ -1,6 +1,14 @@
 main {
-    /* padding-top: var(--nav-offset); */
+    padding-top: var(--nav-offset);
+    z-index: 1;
+}
+
+.form-filter {
+    margin-top: 1rem;
+}
+
+#shop-map {
     position: fixed;
     inset: 0;
-    z-index: 1;
+    z-index: -1;
 }

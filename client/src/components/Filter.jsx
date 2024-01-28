@@ -1,13 +1,21 @@
 import { FaMagnifyingGlass, FaSliders } from 'react-icons/fa6'
 
 import '../css/Filter.css'
+import { useRef } from 'react'
 
 
-function Filter({ placeholder = 'placeholder' }) {
+function Filter({ placeholder = 'placeholder', onFilterSubmit = (value) => {} }) {
+    const inputRef = useRef(null)
+
+    const onSubmit = (e) => {
+        e.preventDefault()
+        onFilterSubmit(inputRef.current.value)
+    }
+
     return (
-        <form method="get" className='form-filter'>
+        <form method="get" className='form-filter' onSubmit={onSubmit}>
             <div className='filter-input'>
-                <input type="search" name="find" id="find" placeholder={placeholder} />
+                <input type="search" name="find" id="find" placeholder={placeholder} ref={inputRef} />
                 <button type="submit">
                     <FaMagnifyingGlass />
                 </button>

@@ -145,6 +145,49 @@ app.get('/db/map/:id/parsed', async (req, res) => {
     }
 })
 
+app.get('/db/shops/:shopId/product/:product', async (req, res) => {
+    const { execute } = require('./db/database')
+
+    if (process.env.DB_NAME === undefined) {
+        console.error('Env var DB_NAME = undefined')
+        res.status(500).json({ error: 'Server error' })
+        return
+    }
+
+    const { product, shopId } = req.params
+
+    if (isNaN(shopId)) {
+        res.status(400).json({ error: 'Wrong parameter' })
+        return
+    }
+
+    const result = await execute(async client => {
+        const collection = client.db(process.env.DB_NAME).collection('shops')
+        const result = await collection.findOne(
+            { 
+                'id': parseInt(shopId), 
+                'products.name': product,
+            },
+            {
+                'projection': {
+                    '_id': 0,
+                    'products': {
+                        '$elemMatch': {
+                            'name': product,
+                        },
+                    },
+                },
+            },
+        )
+        return result
+    })
+
+    if (result && result.products && result.products.length > 0)
+        res.status(200).json(result.products[0])
+    else
+        res.status(404).json({ error: 'Document not found' })
+})
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)

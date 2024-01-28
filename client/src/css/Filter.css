@@ -2,36 +2,41 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 1em;
+}
+
+.form-filter input,
+.form-filter button {
+    font-size: 1rem;
 }
 
 .form-filter .filter-input {
     width: max-content;
     min-width: 25ch;
 
-    padding: .5rem 1rem;
+    padding: .7rem 1.4rem;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    color: var(--c-gray);
-    background-color: #d9e1e2;
+    color: var(--c-black);
+    background-color: var(--c-light-gray);
     border-radius: 60px;
 }
 
 .form-filter .filter-input > button[type=submit] {
-    color: var(--c-gray);
+    color: var(--c-dark-gray);
 }
 
 .form-filter .filter-settings > button[type=button] {
-    width: 2rem;
-    height: 2rem;
+    width: 2.8rem;
+    height: 2.8rem;
 
     display: grid;
     place-items: center;
     
-    color: var(--c-gray);
-    background-color: #d9e1e2;
-    border-radius: 1rem;
+    color: var(--c-dark-gray);
+    background-color: var(--c-light-gray);
+    border-radius: 50%;
 }
