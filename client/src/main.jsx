@@ -10,6 +10,7 @@ import './css/variables.css'
 import './css/resets.css'
 import './css/main.css'
 import ReportBug from './pages/ReportBug/ReportBug.jsx'
+import LoaderPage from './pages/GoogleMap/route.jsx'
 
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             {
                 path: 'report-bug',
                 element: <ReportBug />,
+            },
+            {
+                path: '/',
+                element: <LoaderPage />,
             }
         ]
     }

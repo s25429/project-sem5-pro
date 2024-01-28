@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { Link } from 'react-router-dom'
 
 import{
     APIProvider,
@@ -54,7 +55,11 @@ export default function Intro(){
                         </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Szeroka 89, 80-835 Gdańsk</p>
-                                <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>Przejdź do sklepu</button>
+                                <button type='button' style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
+                                    <Link to={`../shop-map/1`}>
+                                        Przejdź do sklepu
+                                    </Link>
+                                </button>
                             </div>
                     </InfoWindow>
                     )}
@@ -72,7 +77,11 @@ export default function Intro(){
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Zawodników 4, 80-729 Gdańsk</p>
-                                <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>Przejdź do sklepu</button>
+                                <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
+                                    <Link to={`../shop-map/1`}>
+                                        Przejdź do sklepu
+                                    </Link>
+                                </button>
                             </div>
                     </InfoWindow>
                     )}
@@ -90,7 +99,11 @@ export default function Intro(){
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <p>Stągiewna 12/LOK. 11, 80-750 Gdańsk</p>
-                                <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>Przejdź do sklepu</button>
+                                <button style={{ backgroundColor: '#CCCCCC', borderRadius: '8px', padding: '8px 16px', marginTop: '8px' }}>
+                                    <Link to={`../shop-map/1`}>
+                                        Przejdź do sklepu
+                                    </Link>
+                                </button>
                             </div>
                     </InfoWindow>
                     )}
