@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import '../../css/LoaderPage.css';
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import '../../css/LoaderPage.css'
+
 
 function LoaderPage() {
-  const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate()
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); 
+    useEffect(() => {
+        document.querySelector('header').classList.add('hide')
 
-    return () => clearTimeout(timer);
-  }, []);
+        const timer = setTimeout(() => {
+            document.querySelector('header').classList.remove('hide')
+            navigate('/google-map')
+        }, 2000)
 
-  return (
-    <div className="loader-container">
-      {isLoading ? (
-        <div className="loader"></div> 
-      ) : (
-        //TODO: Zawartość strony po załadowaniu
-        <h1>Strona załadowana!</h1>
-      )}
-    </div>
-  );
+        return () => clearTimeout(timer)
+    }, [])
+
+    return (
+        <div className="loader-container">
+            <div className="loader"></div> 
+        </div>
+    )
 }
 
-export default LoaderPage;
+
+export default LoaderPage
