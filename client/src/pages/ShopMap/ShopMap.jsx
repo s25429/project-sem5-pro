@@ -26,42 +26,49 @@ const mapConfig = {
 
 function ShopMap() {
     const onProductSearch = async (product) => {
-        console.log(product)
+        const productWasCategory = toggleAisle(product)
+
+        if (productWasCategory)
+            return
 
         const response = await fetch(`/db/shops/${1}/product/${product}`)
         const data = await response.json()
 
-        toggleAisle(data?.category)
-
         if (data?.error)
             alert('Produktu nie znaleziono.')
+
+        const success = toggleAisle(data?.category)
+
+        if (!success && data?.error === undefined) {
+            alert('Napotkano niespodziewany błąd.')
+            console.error('Product in db found, but not on map', data)
+        }
     }
 
     const toggleAisle = (category) => {
-        if (category !== undefined) {
-            const aisle = document
-                .querySelector(mapConfig.container)
-                .querySelector(`g.map-content [data-category=${category}]`)
+        const aisles = document
+            .querySelector(mapConfig.container)
+            .querySelectorAll(`g.map-content .active[data-category]`)
 
-            if (aisle === null) {
-                alert('Napotkano niespodziewany błąd.')
-                console.error('Product in db found, but not on map', `data=${data}`, `aisle=${aisle}`)
-                return
-            }
+        aisles.forEach(aisle => {
+            aisle.classList.remove('active')
+            aisle.setAttribute('fill', mapConfig.rect.color)
+        })
 
-            aisle.classList.add('active')
-            aisle.setAttribute('fill', '#bb2551')
-        }
-        else {
-            const aisles = document
-                .querySelector(mapConfig.container)
-                .querySelectorAll(`g.map-content .active[data-category]`)
+        if (category === undefined)
+            return false
 
-            aisles.forEach(aisle => {
-                aisle.classList.remove('active')
-                aisle.setAttribute('fill', mapConfig.rect.color)
-            })
-        }
+        const aisle = document
+            .querySelector(mapConfig.container)
+            .querySelector(`g.map-content [data-category=${category}]`)
+
+        if (aisle === null)
+            return false
+
+        aisle.classList.add('active')
+        aisle.setAttribute('fill', '#bb2551')
+
+        return true
     }
 
     useEffect(() => {
