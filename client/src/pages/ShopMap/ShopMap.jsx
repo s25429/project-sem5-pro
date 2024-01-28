@@ -89,7 +89,7 @@ function ShopMap() {
 
     return (
         <>
-            <Filter onFilterSubmit={onProductSearch} />
+            <Filter onFilterSubmit={onProductSearch} placeholder='Wyszukaj produkt lub kategorie' />
             <div id='shop-map'></div>
         </>
     )

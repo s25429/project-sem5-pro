@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1em;
+    gap: .6em;
 }
 
 .form-filter input,
@@ -12,7 +12,7 @@
 
 .form-filter .filter-input {
     width: max-content;
-    min-width: 25ch;
+    width: 32ch;
 
     padding: .7rem 1.4rem;
 
@@ -23,6 +23,12 @@
     color: var(--c-black);
     background-color: var(--c-light-gray);
     border-radius: 60px;
+}
+
+.form-filter .filter-input input {
+    text-overflow: ellipsis;
+    width: 100%;
+    font-size: .9rem;
 }
 
 .form-filter .filter-input > button[type=submit] {
