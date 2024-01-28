@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 
 
 const app = express()
@@ -75,16 +75,11 @@ app.get('/db/shops/:id', async (req, res) => {
         return
     }
 
-    const { id } = req.params
-
-    if (isNaN(id)) {
-        res.status(400).json({ error: 'Wrong parameter' })
-        return
-    }
+    const objectId = new ObjectId(req.params.id)
 
     const result = await execute(async client => {
         const collection = client.db(process.env.DB_NAME).collection('shops')
-        const result = await collection.findOne({ id: parseInt(id) })
+        const result = await collection.findOne({ '_id': objectId })
         return result
     })
 
@@ -95,54 +90,94 @@ app.get('/db/shops/:id', async (req, res) => {
 })
 
 app.get('/db/map/:id/parsed', async (req, res) => {
-    const { id } = req.params
+    const { execute } = require('./db/database')
 
-    const client = new MongoClient(uri)
-
-    try {
-        await client.connect()
-        console.log('Connected to the database')
-
-        const db = client.db(dbName)
-        const collection = db.collection('shops')
-
-        const shop = await getShopById(collection, id)
-
-        if (!shop) {
-            return res.status(404).json({ error: 'Shop not found' })
-        }
-
-        // Transform the map data, including all associated products
-        const transformedMap = shop.map.map(item => {
-            const associatedProduct = shop.products.find(prod => prod.mapId === item.id)
-            return {
-                category: associatedProduct ? associatedProduct.category : null,
-                group: item.group,
-                x: item.x,
-                y: item.y,
-                width: item.width,
-                height: item.height,
-            }
-        })
-
-        const result = {
-            id: shop.id,
-            name: shop.name,
-            location: shop.location,
-            objects: transformedMap,
-        }
-
-        res.status(200).json(result)
-
-    } 
-    catch (error) {
-        console.error('Error retrieving shop:', error)
-        res.status(500).json({ error: 'Internal server error' })
-    } 
-    finally {
-        await client.close()
-        console.log('Connection closed')
+    if (process.env.DB_NAME === undefined) {
+        console.error('Env var DB_NAME = undefined')
+        res.status(500).json({ error: 'Server error' })
+        return
     }
+
+    const objectId = new ObjectId(req.params.id)
+
+    const result = await execute(async client => {
+        const collection = client.db(process.env.DB_NAME).collection('shops')
+        const result = await collection.findOne({ '_id': objectId })
+        return result
+    })
+
+    if (result === null) {
+        res.status(404).json({ error: 'Document not found' })
+        return
+    }
+
+    const map = {
+        id: result._id,
+        name: result.name,
+        location: result.location,
+        objects: result.groups.map(group => {
+            const data = group.categories.map(category => ({
+                group: group.name,
+                category: category.name,
+                x: category.x,
+                y: category.y,
+                width: category.width,
+                height: category.height,
+            }))
+            return data
+        }).reduce((acc, newGroup) => [...acc, ...newGroup], [])
+    }
+
+    res.status(200).json(map)
+
+    // const { id } = req.params
+
+    // const client = new MongoClient(uri)
+
+    // try {
+    //     await client.connect()
+    //     console.log('Connected to the database')
+
+    //     const db = client.db(dbName)
+    //     const collection = db.collection('shops')
+
+    //     const shop = await getShopById(collection, id)
+
+    //     if (!shop) {
+    //         return res.status(404).json({ error: 'Shop not found' })
+    //     }
+
+    //     // Transform the map data, including all associated products
+    //     const transformedMap = shop.map.map(item => {
+    //         const associatedProduct = shop.products.find(prod => prod.mapId === item.id)
+    //         return {
+    //             category: associatedProduct ? associatedProduct.category : null,
+    //             group: item.group,
+    //             x: item.x,
+    //             y: item.y,
+    //             width: item.width,
+    //             height: item.height,
+    //         }
+    //     })
+
+    //     const result = {
+    //         id: shop.id,
+    //         name: shop.name,
+    //         location: shop.location,
+    //         objects: transformedMap,
+    //     }
+
+    //     res.status(200).json(result)
+
+    // } 
+    // catch (error) {
+    //     console.error('Error retrieving shop:', error)
+    //     res.status(500).json({ error: 'Internal server error' })
+    // } 
+    // finally {
+    //     await client.close()
+    //     console.log('Connection closed')
+    // }
 })
 
 app.get('/db/shops/:shopId/product/:product', async (req, res) => {
@@ -155,35 +190,99 @@ app.get('/db/shops/:shopId/product/:product', async (req, res) => {
     }
 
     const { product, shopId } = req.params
-
-    if (isNaN(shopId)) {
-        res.status(400).json({ error: 'Wrong parameter' })
-        return
-    }
+    const objectId = new ObjectId(shopId)
+    const productName = product
 
     const result = await execute(async client => {
         const collection = client.db(process.env.DB_NAME).collection('shops')
-        const result = await collection.findOne(
-            { 
-                'id': parseInt(shopId), 
-                'products.name': product,
+        // const result = await collection.findOne(
+        //     { 
+        //         '_id': objectId, 
+        //         'groups.categories.products.name': product,
+        //     },
+        //     {
+        //         'projection': {
+        //             '_id': 0,
+        //             'groups.categories.products': {
+        //                 '$elemMatch': {
+        //                     'name': product,
+        //                 },
+        //             },
+        //         },
+        //     },
+        // )
+        const result = await collection.aggregate([
+            {
+                $match: {
+                    _id: objectId,
+                    'groups.categories.products.name': productName,
+                },
             },
             {
-                'projection': {
-                    '_id': 0,
-                    'products': {
-                        '$elemMatch': {
-                            'name': product,
+                $project: {
+                    groups: {
+                    $filter: {
+                        input: '$groups',
+                        as: 'group',
+                        cond: {
+                        $gt: [
+                            {
+                            $size: {
+                                $filter: {
+                                input: '$$group.categories',
+                                as: 'category',
+                                cond: {
+                                    $gt: [
+                                    {
+                                        $size: {
+                                        $filter: {
+                                            input: '$$category.products',
+                                            as: 'product',
+                                            cond: {
+                                            $eq: ['$$product.name', productName],
+                                            },
+                                        },
+                                        },
+                                    },
+                                    0,
+                                    ],
+                                },
+                                },
+                            },
+                            },
+                            0,
+                        ],
                         },
+                    },
                     },
                 },
             },
-        )
+            {
+                $unwind: '$groups',
+            },
+            {
+                $unwind: '$groups.categories',
+            },
+            {
+                $unwind: '$groups.categories.products',
+            },
+            {
+                $match: {
+                    'groups.categories.products.name': productName,
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    'groups.categories.products': 1,
+                },
+            },
+          ]).toArray();
         return result
     })
 
-    if (result && result.products && result.products.length > 0)
-        res.status(200).json(result.products[0])
+    if (result?.[0]?.groups?.categories?.products)
+        res.status(200).json(result?.[0]?.groups?.categories?.products)
     else
         res.status(404).json({ error: 'Document not found' })
 })

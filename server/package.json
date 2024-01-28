@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node src/index.js",
-        "insert-sample-data": "node mongoPK/databaseBasicScripts/addToCollection.js"
+        "insert-sample-data": "node mongoPK/databaseBasicScripts/insertSampleData.js"
     },
     "license": "MIT",
     "dependencies": {
