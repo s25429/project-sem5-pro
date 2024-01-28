@@ -8,7 +8,7 @@ function ReportBug() {
     return (
         <>
             <h2>Widzisz jakiś błąd? <br />Zgłoś go do Nas!</h2>
-            <form onSubmit={e => e.preventDefault()}>
+            <form onSubmit={e => e.preventDefault()} className='form-report'>
                 <section>
                     <label htmlFor="reason">Czego błąd dotyczy?</label>
                     <input type="text" name="reason" id="reason" />

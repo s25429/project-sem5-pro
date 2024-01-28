@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Logo from '../assets/logo.svg'
 import { FaEllipsisVertical } from 'react-icons/fa6'
 
+import { useShopIdProvider } from '../context/ShopIdProvider'
 
 import '../css/Header.css'
 import Nav from './Nav'
@@ -11,6 +12,8 @@ import Footer from './Footer'
 
 
 function Header({ title = 'Półkarzyk' }) {
+    const { shopId } = useShopIdProvider()
+
     const [toggleNav, setToggleNav] = useState(false)
 
     return (
@@ -27,9 +30,11 @@ function Header({ title = 'Półkarzyk' }) {
                 <Link to='google-map' onClick={() => setToggleNav(false)}>
                     <button type='button'>Wybierz sklep</button>
                 </Link>
-                <Link to='shop-map/1' onClick={() => setToggleNav(false)}>
-                    <button type='button'>Mapa sklepu</button>
-                </Link>
+                {shopId === null ? null : (
+                    <Link to={`shop-map/${shopId}`} onClick={() => setToggleNav(false)}>
+                        <button type='button'>Mapa sklepu</button>
+                    </Link>
+                )}
                 <Footer />
             </Nav>
         </>
