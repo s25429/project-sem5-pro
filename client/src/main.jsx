@@ -9,6 +9,7 @@ import Intro from './pages/GoogleMap/GoogleMap.jsx'
 import './css/variables.css'
 import './css/resets.css'
 import './css/main.css'
+import ReportBug from './pages/ReportBug/ReportBug.jsx'
 
 
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             {
                 path: 'google-map',
                 element: <Intro />,
+            },
+            {
+                path: 'report-bug',
+                element: <ReportBug />,
             }
         ]
     }

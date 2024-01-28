@@ -21,7 +21,7 @@ function Header({ title = 'Półkarzyk' }) {
                 <FaEllipsisVertical onClick={() => setToggleNav(!toggleNav)} className='toggler-nav' />
             </header>
             <Nav shown={toggleNav}>
-                <Link onClick={() => setToggleNav(false)}>
+                <Link to='report-bug' onClick={() => setToggleNav(false)}>
                     <button type='button'>Zgłoś błąd</button>
                 </Link>
                 <Link to='google-map' onClick={() => setToggleNav(false)}>

@@ -43,7 +43,7 @@ nav button {
     padding: 15px 20px;
 }
 
-nav footer{
+footer{
     color: #06507f;
     display: flex;
     margin-top: auto;
@@ -52,5 +52,4 @@ nav footer{
     
     font-size: small;
     gap: 0.5rem;
-    
 }
