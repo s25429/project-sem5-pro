@@ -6,6 +6,7 @@ import App from './App.jsx'
 import ShopMap, { loader as shopIdLoader } from './pages/ShopMap/ShopMap.jsx'
 import Intro from './pages/GoogleMap/GoogleMap.jsx'
 import ReportBug from './pages/ReportBug/ReportBug.jsx'
+import LoaderPage from './pages/GoogleMap/route.jsx'
 
 import './css/variables.css'
 import './css/resets.css'
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: 'report-bug',
                 element: <ReportBug />,
+            },
+            {
+                path: '/',
+                element: <LoaderPage />,
             }
         ]
     }
