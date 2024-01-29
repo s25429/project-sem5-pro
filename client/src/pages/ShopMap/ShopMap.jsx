@@ -71,7 +71,7 @@ function ShopMap() {
 
         const aisle = document
             .querySelector(mapConfig.container)
-            .querySelector(`g.map-content [data-category=${category}]`)
+            .querySelector(`g.map-content [data-category="${category}"]`)
 
         if (aisle === null)
             return false

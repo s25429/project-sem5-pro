@@ -239,7 +239,7 @@ app.get('/db/shops/:shopId/product/:product', async (req, res) => {
                                             input: '$$category.products',
                                             as: 'product',
                                             cond: {
-                                            $eq: ['$$product.name', productName],
+                                                $eq: ['$$product.name', productName],
                                             },
                                         },
                                         },
@@ -274,15 +274,19 @@ app.get('/db/shops/:shopId/product/:product', async (req, res) => {
             {
                 $project: {
                     _id: 0,
+                    category: '$groups.categories.name',
                     'groups.categories.products': 1,
                 },
             },
-          ]).toArray();
+          ]).toArray()
         return result
     })
 
     if (result?.[0]?.groups?.categories?.products)
-        res.status(200).json(result?.[0]?.groups?.categories?.products)
+        res.status(200).json({
+            category: result?.[0]?.category,
+            product: result?.[0]?.groups?.categories?.products,
+        })
     else
         res.status(404).json({ error: 'Document not found' })
 })
